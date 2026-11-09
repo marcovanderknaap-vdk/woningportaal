@@ -71,7 +71,8 @@ class Controle:
         return run
 
     def _uitvoeren(self, run):
-        eerste_import = not self.m.woningen.exists() and self.m.laatste_succes is None
+        # Zolang er nog nooit een geslaagde controle was, is alles bestaand aanbod (geen label "nieuw")
+        eerste_import = self.m.laatste_succes is None
         links = vind_woninglinks(self.fetcher, self.m, self.regels)
         run.links_gevonden = len(links)
         if not links:
