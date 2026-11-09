@@ -16,7 +16,7 @@
     <div class="detail__info">
       <h1>{{ woning.adres|default:"Adres onbekend" }}</h1>
       <p class="plaats">{{ woning.postcode }} {{ woning.woonplaats }}</p>
-      <p class="prijs prijs--groot">{% if woning.vraagprijs %}€ {{ woning.vraagprijs|intcomma }} <small>{{ woning.prijs_conditie }}</small>{% else %}Prijs op aanvraag{% endif %}</p>
+      <p class="prijs prijs--groot">{% if woning.vraagprijs %}€ {{ woning.vraagprijs|intcomma }} <small>{{ woning.prijs_conditie }}</small>{% elif woning.status == "beschikbaar" %}Prijs op aanvraag{% else %}{{ woning.get_status_display }}{% endif %}</p>
       <dl class="tabel">
         {% for label, waarde in hoofd %}<dt>{{ label }}</dt><dd>{{ waarde }}</dd>{% endfor %}
       </dl>

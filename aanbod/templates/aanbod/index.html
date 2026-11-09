@@ -67,7 +67,7 @@
   if (params.has('sorteer')) sorteer.value = params.get('sorteer');
 
   function kaart(w) {
-    const prijs = w.prijs ? `${euro.format(w.prijs)}${w.conditie ? ' <small>' + esc(w.conditie) + '</small>' : ''}` : 'Prijs op aanvraag';
+    const prijs = w.prijs ? `${euro.format(w.prijs)}${w.conditie ? ' <small>' + esc(w.conditie) + '</small>' : ''}` : (w.status === 'beschikbaar' ? 'Prijs op aanvraag' : esc(w.statusLabel));
     const kenmerken = [w.opp && `${w.opp} m² wonen`, w.perceel && `${w.perceel.toLocaleString('nl-NL')} m² perceel`, w.kamers && `${w.kamers} kamers`].filter(Boolean);
     const labels = [
       w.nieuw ? '<span class="label label--nieuw">Nieuw</span>' : '',

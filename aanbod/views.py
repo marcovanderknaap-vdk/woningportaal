@@ -70,7 +70,7 @@ def index(request):
 def detail(request, pk):
     woning = get_object_or_404(Woning.objects.select_related("makelaar"), pk=pk, verborgen=False)
     hoofd = [
-        ("Vraagprijs", woning.prijs_tekst or "Prijs op aanvraag"),
+        ("Vraagprijs", woning.prijs_tekst or ("Prijs op aanvraag" if woning.status == "beschikbaar" else "")),
         ("Status", woning.get_status_display()),
         ("Soort", woning.get_woningtype_display()),
         ("Woonoppervlakte", f"{woning.woonoppervlakte} m²" if woning.woonoppervlakte else ""),
