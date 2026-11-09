@@ -1,44 +1,86 @@
 [
   {
     "naam": "M2 Makelaars",
-    "straat": "", "postcode": "", "plaats": "", "telefoon": "", "email": "",
+    "straat": "",
+    "postcode": "",
+    "plaats": "",
+    "telefoon": "",
+    "email": "",
     "website": "https://www.m2makelaars.nl",
     "aanbod_url": "https://www.m2makelaars.nl/aanbod/beschikbaar/",
-    "bron_type": "aanbodpagina", "link_patroon": "", "extra_urls": "", "actief": true
+    "bron_type": "aanbodpagina",
+    "link_patroon": "",
+    "extra_urls": "",
+    "actief": true
   },
   {
     "naam": "Casco Makelaars",
-    "straat": "", "postcode": "", "plaats": "", "telefoon": "", "email": "",
+    "straat": "",
+    "postcode": "",
+    "plaats": "",
+    "telefoon": "",
+    "email": "",
     "website": "https://www.cascomakelaars.nl",
     "aanbod_url": "https://www.cascomakelaars.nl/aanbod/woningaanbod/",
-    "bron_type": "aanbodpagina", "link_patroon": "/aanbod/woningaanbod/[^/]+/koop/", "extra_urls": "", "actief": true
+    "bron_type": "aanbodpagina",
+    "link_patroon": "/aanbod/woningaanbod/[^/]+/koop/",
+    "extra_urls": "",
+    "actief": true
   },
   {
     "naam": "Faasse & Fermont",
-    "straat": "", "postcode": "", "plaats": "", "telefoon": "", "email": "",
+    "straat": "",
+    "postcode": "",
+    "plaats": "",
+    "telefoon": "",
+    "email": "",
     "website": "https://faasse-fermont.nl",
     "aanbod_url": "https://faasse-fermont.nl/huis/",
-    "bron_type": "aanbodpagina", "link_patroon": "", "extra_urls": "", "actief": true
+    "bron_type": "aanbodpagina",
+    "link_patroon": "",
+    "extra_urls": "",
+    "actief": true
   },
   {
     "naam": "Kuub Makelaars",
-    "straat": "", "postcode": "", "plaats": "", "telefoon": "", "email": "",
+    "straat": "",
+    "postcode": "",
+    "plaats": "",
+    "telefoon": "",
+    "email": "",
     "website": "https://www.kuubmakelaars.nl",
     "aanbod_url": "https://www.kuubmakelaars.nl/realworks_wonen-sitemap.xml",
-    "bron_type": "sitemap", "link_patroon": "", "extra_urls": "", "actief": true
+    "bron_type": "sitemap",
+    "link_patroon": "",
+    "extra_urls": "",
+    "actief": true
   },
   {
     "naam": "Schulting & Partners",
-    "straat": "", "postcode": "", "plaats": "", "telefoon": "", "email": "",
+    "straat": "",
+    "postcode": "",
+    "plaats": "",
+    "telefoon": "",
+    "email": "",
     "website": "https://www.schulting-partners.nl",
     "aanbod_url": "https://www.schulting-partners.nl/koopwoningen",
-    "bron_type": "aanbodpagina", "link_patroon": "", "extra_urls": "", "actief": true
+    "bron_type": "aanbodpagina",
+    "link_patroon": "",
+    "extra_urls": "",
+    "actief": true
   },
   {
     "naam": "Sinke Komejan",
-    "straat": "", "postcode": "", "plaats": "", "telefoon": "", "email": "",
-    "website": "https://www.sinkekomejan.nl",
-    "aanbod_url": "https://www.sinkekomejan.nl/",
-    "bron_type": "aanbodpagina", "link_patroon": "", "extra_urls": "", "actief": false
+    "straat": "",
+    "postcode": "",
+    "plaats": "",
+    "telefoon": "",
+    "email": "",
+    "website": "https://www.sinke.nl",
+    "aanbod_url": "https://www.sinke.nl/woningaanbod/",
+    "bron_type": "aanbodpagina",
+    "link_patroon": "",
+    "extra_urls": "",
+    "actief": true
   }
 ]

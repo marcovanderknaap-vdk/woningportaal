@@ -18,7 +18,7 @@ from .plaatsen import zoek_plaats
 
 # Label op de site (kleine letters, zonder ':') -> intern veld
 LABELS = {
-    "vraagprijs": "prijs", "koopsom": "prijs", "koopprijs": "prijs", "prijs": "prijs",
+    "vraagprijs": "prijs", "koopsom": "prijs", "koopprijs": "prijs", "verkoopprijs": "prijs", "prijs": "prijs",
     "koopsom vanaf": "prijs", "vanaf": "prijs",
     "huurprijs": "huurprijs", "huur": "huurprijs",
     "status": "status", "beschikbaarheid": "status",
