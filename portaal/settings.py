@@ -94,6 +94,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # --- Portaal ---------------------------------------------------------------
 PORTAAL_NAAM = env("PORTAAL_NAAM", "Zeeuws Woningaanbod")
+# Eigen logo: pad binnen de static-map, bijv. "aanbod/logo.svg". Leeg = standaard beeldmerk + naam.
+PORTAAL_LOGO = env("PORTAAL_LOGO", "")
 # Mogen zoekmachines de site indexeren? Standaard uit zolang het een test is.
 PORTAAL_INDEXEREN = env_bool("PORTAAL_INDEXEREN", False)
 # Aantal dagen dat een woning het label 'nieuw' krijgt.

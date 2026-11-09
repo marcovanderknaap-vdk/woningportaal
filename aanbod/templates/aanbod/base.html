@@ -12,8 +12,7 @@
   <header class="kop">
     <div class="kop__binnen">
       <a class="logo" href="{{ BASIS }}">
-        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4 3 15h4v13h7v-8h4v8h7V15h4z" fill="currentColor"/></svg>
-        <span>{{ PORTAAL_NAAM }}</span>
+        {% if PORTAAL_LOGO %}<img class="logo__beeld" src="{{ BASIS }}static/{{ PORTAAL_LOGO }}" alt="{{ PORTAAL_NAAM }}">{% else %}{% include "aanbod/includes/beeldmerk.svg" %}<span>{{ PORTAAL_NAAM }}</span>{% endif %}
       </a>
       <nav class="menu">
         <a href="{{ BASIS }}">Koopwoningen</a>

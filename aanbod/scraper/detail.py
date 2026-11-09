@@ -292,6 +292,22 @@ def parse_adres(titel, url):
     return adres, postcode, plaats or ""
 
 
+GEEN_FOTO = re.compile(r"logo|icon|sprite|placeholder|\.svg|plattegrond|floorplan|kaart|map|kadast|avatar|medewerker", re.I)
+
+
+def _eerste_foto(soup):
+    """Eerste echte woningfoto: achtergrondafbeelding in een style-attribuut of een <img>."""
+    for el in soup.find_all(style=re.compile(r"url\(", re.I)):
+        m = re.search(r"url\(['\"]?([^'\")]+\.(?:jpe?g|png|webp)[^'\")]*)", el["style"], re.I)
+        if m and not GEEN_FOTO.search(m.group(1) + " " + " ".join(el.get("class", []))):
+            return m.group(1)
+    for img in soup.find_all("img"):
+        src = img.get("data-src") or img.get("src") or ""
+        if src and not GEEN_FOTO.search(f"{src} {img.get('alt', '')} {' '.join(img.get('class', []))}"):
+            return src
+    return ""
+
+
 def _status_uit_badges(soup):
     for el in soup.find_all(class_=re.compile(r"status|label|badge|sticker|banner|ribbon|flag|tag", re.I)):
         tekst = _schoon(el.get_text(" "))
@@ -332,6 +348,8 @@ def parse_detail(html, url):
             if isinstance(img, str):
                 res.foto_url = img
 
+    reserve_foto = _eerste_foto(soup)
+
     adres, postcode, plaats = parse_adres(titel, url)
     res.adres = res.adres or adres
     res.postcode = res.postcode or postcode
@@ -342,11 +360,7 @@ def parse_detail(html, url):
         tag.decompose()
 
     if not res.foto_url:
-        for img in soup.find_all("img"):
-            src = img.get("data-src") or img.get("src") or ""
-            if src and not re.search(r"logo|icon|sprite|placeholder|\.svg", src, re.I):
-                res.foto_url = src
-                break
+        res.foto_url = reserve_foto
     if res.foto_url:
         res.foto_url = urljoin(url, res.foto_url)
 

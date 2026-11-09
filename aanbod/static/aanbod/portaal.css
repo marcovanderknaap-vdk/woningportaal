@@ -1,20 +1,21 @@
-/* Zeeuws Woningaanbod – stijl: donkerblauw met oranje accent */
+/* Zeeuws Woningaanbod – licht en Zeeuws: zeeblauw, zeenevel, zand en vlaggeel */
 :root {
-  --blauw: #0b2a55;
-  --blauw-licht: #1d4580;
-  --blauw-zacht: #e9eff8;
-  --oranje: #e8731b;
-  --oranje-donker: #c85d0d;
-  --tekst: #1d2433;
-  --grijs: #5b6576;
-  --lijn: #dde3ec;
-  --achtergrond: #f5f7fa;
+  --blauw: #134b63;          /* diep zeeblauw (Westerschelde) */
+  --blauw-licht: #22708c;    /* zeeblauw */
+  --blauw-zacht: #e2edef;    /* zeenevel */
+  --accent: #f2c12e;         /* geel uit de Zeeuwse vlag */
+  --accent-donker: #dcaa12;
+  --zand: #f1ead9;           /* strand */
+  --tekst: #1a2b33;
+  --grijs: #5a6b71;
+  --lijn: #d9e2e2;
+  --achtergrond: #f7f8f5;
   --wit: #ffffff;
-  --optie: #c98a00;
-  --ovb: #d1580f;
-  --verkocht: #b42318;
+  --optie: #b8860b;
+  --ovb: #c4551a;
+  --verkocht: #a8261c;
   --radius: 10px;
-  --schaduw: 0 1px 2px rgba(11, 42, 85, .06), 0 4px 16px rgba(11, 42, 85, .07);
+  --schaduw: 0 1px 2px rgba(19, 75, 99, .06), 0 4px 16px rgba(19, 75, 99, .08);
 }
 
 * { box-sizing: border-box; }
@@ -31,21 +32,22 @@ img { max-width: 100%; display: block; }
 h1, h2 { line-height: 1.2; color: var(--blauw); }
 
 /* Kop */
-.kop { background: var(--blauw); color: var(--wit); }
+.kop { background: var(--wit); color: var(--blauw); border-bottom: 4px solid var(--accent); }
 .kop__binnen, .voet__binnen, .held__binnen, .resultaten, .detail {
   max-width: 1200px; margin: 0 auto; padding-left: 16px; padding-right: 16px;
 }
 .kop__binnen { display: flex; align-items: center; justify-content: space-between; gap: 8px 16px; min-height: 64px; flex-wrap: wrap; padding-top: 10px; padding-bottom: 10px; }
-.logo { display: flex; align-items: center; gap: 10px; color: var(--wit); text-decoration: none; font-weight: 700; font-size: 1.15rem; }
-.logo svg { width: 30px; height: 30px; color: var(--oranje); }
+.logo { display: flex; align-items: center; gap: 10px; color: var(--blauw); text-decoration: none; font-weight: 700; font-size: 1.15rem; }
+.logo .beeldmerk { width: 40px; height: 40px; flex: none; }
+.logo__beeld { height: 48px; width: auto; }
 .menu { display: flex; gap: 20px; flex-wrap: wrap; }
-.menu a { color: #d6e0ef; text-decoration: none; font-weight: 500; }
-.menu a:hover { color: var(--wit); }
+.menu a { color: var(--blauw-licht); text-decoration: none; font-weight: 600; }
+.menu a:hover { color: var(--blauw); text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 3px; text-underline-offset: 6px; }
 
 /* Held + filters */
-.held { background: linear-gradient(180deg, var(--blauw) 0%, var(--blauw-licht) 100%); color: var(--wit); padding: 32px 0 40px; }
-.held h1 { color: var(--wit); margin: 0 0 6px; font-size: clamp(1.6rem, 4vw, 2.3rem); }
-.held p { margin: 0 0 24px; color: #d6e0ef; }
+.held { background: linear-gradient(180deg, var(--blauw-zacht) 0%, var(--achtergrond) 100%); color: var(--blauw); padding: 32px 0 40px; }
+.held h1 { color: var(--blauw); margin: 0 0 6px; font-size: clamp(1.6rem, 4vw, 2.3rem); }
+.held p { margin: 0 0 24px; color: var(--grijs); }
 .filters {
   display: grid; gap: 12px;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -57,9 +59,9 @@ select {
   font: inherit; font-weight: 400; color: var(--tekst);
   padding: 10px 12px; border: 1px solid var(--lijn); border-radius: 8px; background: var(--wit); width: 100%;
 }
-select:focus, input:focus, button:focus, a:focus-visible { outline: 2px solid var(--oranje); outline-offset: 2px; }
+select:focus, input:focus, button:focus, a:focus-visible { outline: 2px solid var(--blauw-licht); outline-offset: 2px; }
 .filters .vink { flex-direction: row; align-items: center; gap: 8px; color: var(--tekst); font-weight: 500; padding: 10px 0; }
-.vink input { width: 18px; height: 18px; accent-color: var(--oranje); }
+.vink input { width: 18px; height: 18px; accent-color: var(--blauw-licht); }
 
 /* Resultaten */
 .resultaten { padding-top: 24px; padding-bottom: 48px; }
@@ -86,7 +88,7 @@ select:focus, input:focus, button:focus, a:focus-visible { outline: 2px solid va
 
 .labels { position: absolute; top: 10px; left: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
 .label { font-size: .75rem; font-weight: 700; padding: 3px 9px; border-radius: 4px; color: var(--wit); text-transform: uppercase; letter-spacing: .03em; }
-.label--nieuw { background: var(--oranje); }
+.label--nieuw { background: var(--accent); color: var(--blauw); }
 .label--onder_optie { background: var(--optie); }
 .label--verkocht_ov { background: var(--ovb); }
 .label--verkocht { background: var(--verkocht); }
@@ -94,9 +96,9 @@ select:focus, input:focus, button:focus, a:focus-visible { outline: 2px solid va
 .leeg { text-align: center; padding: 40px 16px; color: var(--grijs); }
 .leeg button, .knop {
   font: inherit; font-weight: 600; cursor: pointer; border: 0; border-radius: 8px;
-  background: var(--oranje); color: var(--wit); padding: 10px 18px; text-decoration: none; display: inline-block;
+  background: var(--accent); color: var(--blauw); padding: 10px 18px; text-decoration: none; display: inline-block;
 }
-.leeg button:hover, .knop:hover { background: var(--oranje-donker); }
+.leeg button:hover, .knop:hover { background: var(--accent-donker); }
 
 /* Detail */
 .detail { padding-top: 20px; padding-bottom: 48px; }
@@ -120,10 +122,10 @@ select:focus, input:focus, button:focus, a:focus-visible { outline: 2px solid va
 .makelaars h2 { margin: 0 0 8px; font-size: 1.1rem; }
 
 /* Voet */
-.voet { background: var(--blauw); color: #c7d3e6; padding: 28px 0; margin-top: 24px; }
-.voet strong { color: var(--wit); }
+.voet { background: var(--zand); color: var(--tekst); padding: 28px 0; margin-top: 24px; }
+.voet strong { color: var(--blauw); }
 .klein { font-size: .82rem; color: var(--grijs); }
-.voet .klein { color: #9fb1cc; }
+.voet .klein { color: var(--grijs); }
 
 @media (max-width: 800px) {
   .detail__raster { grid-template-columns: 1fr; }

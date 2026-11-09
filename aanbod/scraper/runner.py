@@ -190,7 +190,7 @@ class Controle:
         woning.online = True
         woning.laatst_gezien = nu
 
-        oude_status, oude_prijs = woning.status, woning.vraagprijs
+        oude_status, oude_prijs, oude_foto = woning.status, woning.vraagprijs, woning.foto_bron_url
         if res.status is None and res.vraagprijs is None:
             run.fouten += 1
             self._log(f"FOUT: kon status/prijs niet meer lezen voor {woning} – sitewijziging?")
@@ -211,7 +211,10 @@ class Controle:
             )
         run.bijgewerkt += 1
         woning.save()
-        if not woning.foto and res.foto_url:
+        if res.foto_url and (not woning.foto or res.foto_url != oude_foto):
+            # Nieuwe of betere hoofdfoto: opnieuw ophalen
+            if woning.foto:
+                woning.foto.delete(save=False)
             self._foto(woning, res.foto_url)
 
     def _vul(self, woning, res, bestaand=False):
