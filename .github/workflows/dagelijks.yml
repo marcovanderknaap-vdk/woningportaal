@@ -1,0 +1,99 @@
+# Dagelijkse controle van het aanbod + publicatie van de testsite op GitHub Pages.
+#
+# De database en foto's worden bewaard in de aparte branch 'data', zodat de
+# code-branch schoon blijft. Bij een storing stuurt GitHub automatisch een
+# e-mail naar de eigenaar van de repository; met de secrets EMAIL_* en
+# RAPPORT_EMAIL stuurt de applicatie daarnaast een eigen storingsrapport.
+name: Dagelijkse controle
+
+on:
+  schedule:
+    - cron: "17 4 * * *"   # elke dag rond 05:17/06:17 Nederlandse tijd
+  workflow_dispatch:        # handmatig starten via het tabblad Actions
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: dagelijks
+  cancel-in-progress: false
+
+jobs:
+  ophalen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      PORTAAL_DB_PATH: ${{ github.workspace }}/databranch/portaal.sqlite3
+      PORTAAL_MEDIA_ROOT: ${{ github.workspace }}/databranch/media
+      DJANGO_DEBUG: "false"
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY || 'alleen-voor-export' }}
+      EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+      EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+      EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+      EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+      EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+      RAPPORT_EMAIL: ${{ secrets.RAPPORT_EMAIL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Database ophalen uit branch 'data'
+        run: |
+          if git ls-remote --exit-code --heads origin data >/dev/null; then
+            git fetch --depth 1 origin data
+            git worktree add databranch origin/data
+          else
+            git worktree add --detach databranch
+            (cd databranch && git checkout --orphan data && git rm -rfq . )
+          fi
+
+      - name: Database bijwerken en makelaars laden
+        run: |
+          python manage.py migrate --noinput
+          python manage.py makelaars_laden
+
+      - name: Aanbod controleren
+        id: controle
+        run: python manage.py ophalen || echo "probleem=1" >> "$GITHUB_OUTPUT"
+
+      - name: Database en foto's bewaren
+        if: always()
+        run: |
+          cd databranch
+          git config user.name "woningportaal-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -qm "Aanbod bijgewerkt $(date +%F)" || echo "Geen wijzigingen"
+          git push origin HEAD:data
+
+      - name: Statische site maken
+        run: python manage.py export_statisch --uit site --basis "/${{ github.event.repository.name }}/"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Melden als er een probleem was
+        if: steps.controle.outputs.probleem == '1'
+        run: |
+          echo "::error::Bij een of meer makelaars ging het ophalen mis. Zie de log van stap 'Aanbod controleren'."
+          exit 1
+
+  publiceren:
+    needs: ophalen
+    if: always() && needs.ophalen.result != 'cancelled'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

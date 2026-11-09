@@ -1,0 +1,90 @@
+from datetime import timedelta
+
+from django.test import TestCase
+from django.utils import timezone
+
+from .models import Makelaar, Woning
+from .scraper.detail import normaliseer_status, normaliseer_type, parse_adres, parse_detail, parse_prijs
+from .scraper.discovery import kies_woninglinks
+from .scraper.plaatsen import zoek_plaats
+
+
+class NormaliseerTest(TestCase):
+    def test_prijs(self):
+        self.assertEqual(parse_prijs("€ 395.000,- k.k."), (395000, "k.k."))
+        self.assertEqual(parse_prijs("Vraagprijs € 1.425.000 kosten koper"), (1425000, "k.k."))
+        self.assertEqual(parse_prijs("€ 155.000,- v.o.n."), (155000, "v.o.n."))
+        self.assertEqual(parse_prijs("Prijs op aanvraag")[0], None)
+
+    def test_status(self):
+        self.assertEqual(normaliseer_status("Verkocht onder voorbehoud"), "verkocht_ov")
+        self.assertEqual(normaliseer_status("Onder bod"), "onder_optie")
+        self.assertEqual(normaliseer_status("Onder optie"), "onder_optie")
+        self.assertEqual(normaliseer_status("Verkocht"), "verkocht")
+        self.assertEqual(normaliseer_status("Beschikbaar"), "beschikbaar")
+
+    def test_type(self):
+        self.assertEqual(normaliseer_type("Eengezinswoning", "Tussenwoning"), "tussenwoning")
+        self.assertEqual(normaliseer_type("Eengezinswoning", "2-onder-1-kapwoning"), "2-onder-1-kap")
+        self.assertEqual(normaliseer_type("Villa", "Vrijstaande woning"), "vrijstaand")
+        self.assertEqual(normaliseer_type("Bovenwoning"), "appartement")
+        self.assertEqual(normaliseer_type("Eengezinswoning", "Halfvrijstaande woning"), "2-onder-1-kap")
+
+    def test_plaats(self):
+        self.assertEqual(zoek_plaats("Spanjaardstraat 13 in Middelburg"), "Middelburg")
+        self.assertEqual(zoek_plaats("annoijstraat 6 sas van gent"), "Sas van Gent")
+        self.assertEqual(zoek_plaats("Meiveld 23 Oost-Souburg"), "Oost-Souburg")
+        self.assertEqual(zoek_plaats("Kapellestraat 5 Veere"), "Veere")
+
+    def test_adres_uit_titel(self):
+        self.assertEqual(
+            parse_adres("Huis te koop: Grootmede 55, 4337 AB Middelburg - M2 Makelaars", "https://x/"),
+            ("Grootmede 55", "4337 AB", "Middelburg"),
+        )
+        self.assertEqual(
+            parse_adres("Spanjaardstraat 13 in Middelburg 4331 EN: Woonhuis te koop.", "https://x/"),
+            ("Spanjaardstraat 13", "4331 EN", "Middelburg"),
+        )
+        self.assertEqual(parse_adres("Statenlaan 8 (Middelburg) | Kuub Makelaars", "https://x/")[::2], ("Statenlaan 8", "Middelburg"))
+
+
+class DetailTest(TestCase):
+    HTML = """<html><head><title>Huis te koop: Dorpsstraat 1, 4321 AB Goes - Makelaar</title>
+    <meta property="og:image" content="/foto.jpg"></head><body>
+    <nav>Verkocht</nav>
+    <div class="kenmerken"><span>Vraagprijs</span><span>€ 350.000,- k.k.</span>
+    <span>Status</span><span>Verkocht onder voorbehoud</span>
+    <span>Soort woning</span><span>Eengezinswoning</span><span>Type woning</span><span>Hoekwoning</span>
+    <span>Woonoppervlakte</span><span>120 m<sup>2</sup></span><span>Aantal kamers</span><span>5</span>
+    <span>Bouwjaar</span><span>1985</span><span>Energielabel</span><span>B</span></div></body></html>"""
+
+    def test_parse(self):
+        r = parse_detail(self.HTML, "https://makelaar.nl/woning/dorpsstraat-1-goes/")
+        self.assertEqual((r.adres, r.postcode, r.woonplaats), ("Dorpsstraat 1", "4321 AB", "Goes"))
+        self.assertEqual(r.vraagprijs, 350000)
+        self.assertEqual(r.status, "verkocht_ov")
+        self.assertEqual(r.woningtype, "hoekwoning")
+        self.assertEqual((r.woonoppervlakte, r.kamers, r.bouwjaar, r.energielabel), (120, 5, 1985, "B"))
+        self.assertEqual(r.foto_url, "https://makelaar.nl/foto.jpg")
+
+
+class LinksTest(TestCase):
+    def test_automatisch(self):
+        links = [
+            "https://m.nl/aanbod/middelburg-grootmede-55/", "https://m.nl/aanbod/vlissingen-singel-58/",
+            "https://m.nl/aanbod/goes-markt-1/", "https://m.nl/aanbod/beschikbaar/page/2/",
+            "https://m.nl/nieuws/top-10-tips-2024/", "https://m.nl/contact/", "https://m.nl/?p=12",
+        ]
+        self.assertEqual(len(kies_woninglinks(links)), 3)
+
+
+class NieuwLabelTest(TestCase):
+    def test_nieuw(self):
+        m = Makelaar.objects.create(naam="Test", aanbod_url="https://m.nl/")
+        w = Woning.objects.create(makelaar=m, url="https://m.nl/1")
+        self.assertTrue(w.is_nieuw)
+        w.eerst_gezien = timezone.now() - timedelta(days=15)
+        self.assertFalse(w.is_nieuw)
+        w.eerst_gezien = timezone.now()
+        w.eerste_import = True
+        self.assertFalse(w.is_nieuw)

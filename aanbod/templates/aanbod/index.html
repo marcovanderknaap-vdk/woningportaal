@@ -1,0 +1,124 @@
+{% extends "aanbod/base.html" %}
+{% block inhoud %}
+<section class="held">
+  <div class="held__binnen">
+    <h1>Koopwoningen in Zeeland</h1>
+    <p>Het actuele aanbod van {{ makelaars_aantal }} Zeeuwse makelaars, elke dag bijgewerkt.</p>
+    <form class="filters" id="filters" onsubmit="return false">
+      <label>Woonplaats
+        <select name="plaats">
+          <option value="">Alle plaatsen</option>
+          {% for plaats, n in plaatsen %}<option value="{{ plaats }}">{{ plaats }} ({{ n }})</option>{% endfor %}
+        </select>
+      </label>
+      <label>Prijsklasse
+        <select name="prijs">
+          <option value="">Alle prijzen</option>
+          {% for code, label, min, max in prijsklassen %}<option value="{{ code }}">{{ label }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>Soort woning
+        <select name="type">
+          <option value="">Alle soorten</option>
+          {% for code, label in types %}<option value="{{ code }}">{{ label }}</option>{% endfor %}
+        </select>
+      </label>
+      <label class="vink"><input type="checkbox" name="beschikbaar" value="1"> Alleen beschikbaar</label>
+    </form>
+  </div>
+</section>
+
+<section class="resultaten">
+  <div class="resultaten__kop">
+    <p id="telling" aria-live="polite">{{ aantal }} woningen</p>
+    <label class="sorteer">Sorteer
+      <select id="sorteer">
+        <option value="nieuw">Nieuwste eerst</option>
+        <option value="prijs-op">Prijs (laag – hoog)</option>
+        <option value="prijs-af">Prijs (hoog – laag)</option>
+        <option value="opp-af">Woonoppervlakte (groot – klein)</option>
+        <option value="plaats">Woonplaats (A – Z)</option>
+      </select>
+    </label>
+  </div>
+  <div class="raster" id="raster"></div>
+  <p class="leeg" id="leeg" hidden>Geen woningen gevonden met deze selectie. <button type="button" id="wis">Filters wissen</button></p>
+  <noscript><p class="leeg">Zet JavaScript aan om het aanbod te bekijken en te filteren.</p></noscript>
+</section>
+
+<script id="woningen-data" type="application/json">{{ woningen_json|safe }}</script>
+<script>
+(function () {
+  const woningen = JSON.parse(document.getElementById('woningen-data').textContent);
+  const form = document.getElementById('filters');
+  const sorteer = document.getElementById('sorteer');
+  const raster = document.getElementById('raster');
+  const telling = document.getElementById('telling');
+  const leeg = document.getElementById('leeg');
+  const euro = new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  // Filters uit de URL halen (zodat een selectie te delen is)
+  const params = new URLSearchParams(location.search);
+  for (const el of form.elements) {
+    if (!el.name || !params.has(el.name)) continue;
+    if (el.type === 'checkbox') el.checked = params.get(el.name) === '1'; else el.value = params.get(el.name);
+  }
+  if (params.has('sorteer')) sorteer.value = params.get('sorteer');
+
+  function kaart(w) {
+    const prijs = w.prijs ? `${euro.format(w.prijs)}${w.conditie ? ' <small>' + esc(w.conditie) + '</small>' : ''}` : 'Prijs op aanvraag';
+    const kenmerken = [w.opp && `${w.opp} m² wonen`, w.perceel && `${w.perceel.toLocaleString('nl-NL')} m² perceel`, w.kamers && `${w.kamers} kamers`].filter(Boolean);
+    const labels = [
+      w.nieuw ? '<span class="label label--nieuw">Nieuw</span>' : '',
+      w.status !== 'beschikbaar' ? `<span class="label label--${w.status}">${esc(w.statusLabel)}</span>` : ''
+    ].join('');
+    return `<article class="kaart${w.status === 'verkocht' ? ' kaart--verkocht' : ''}">
+      <a href="${esc(w.url)}" class="kaart__link">
+        <div class="kaart__foto">${w.foto ? `<img src="${esc(w.foto)}" alt="" loading="lazy">` : '<div class="geen-foto">Geen foto</div>'}<div class="labels">${labels}</div></div>
+        <div class="kaart__tekst">
+          <h2>${esc(w.adres || 'Adres onbekend')}</h2>
+          <p class="plaats">${esc([w.postcode, w.plaats].filter(Boolean).join(' '))}</p>
+          <p class="prijs">${prijs}</p>
+          <p class="kenmerken">${kenmerken.map(esc).join(' · ')}</p>
+          <p class="makelaar">${esc(w.typeLabel)} · ${esc(w.makelaar)}</p>
+        </div>
+      </a>
+    </article>`;
+  }
+
+  function toon() {
+    const f = Object.fromEntries(new FormData(form));
+    let [min, max] = (f.prijs || '').split('-').map(v => v === '' || v === undefined ? null : Number(v));
+    let lijst = woningen.filter(w =>
+      (!f.plaats || w.plaats === f.plaats) &&
+      (!f.type || w.type === f.type) &&
+      (!f.beschikbaar || w.status === 'beschikbaar') &&
+      (!f.prijs || (w.prijs !== null && (min === null || w.prijs >= min) && (max === null || w.prijs < max)))
+    );
+    const s = sorteer.value;
+    const nul = (v, d) => v === null || v === undefined ? d : v;
+    lijst.sort({
+      'nieuw': (a, b) => b.sinds.localeCompare(a.sinds) || b.id - a.id,
+      'prijs-op': (a, b) => nul(a.prijs, 1e12) - nul(b.prijs, 1e12),
+      'prijs-af': (a, b) => nul(b.prijs, -1) - nul(a.prijs, -1),
+      'opp-af': (a, b) => nul(b.opp, -1) - nul(a.opp, -1),
+      'plaats': (a, b) => a.plaats.localeCompare(b.plaats) || a.adres.localeCompare(b.adres),
+    }[s]);
+    raster.innerHTML = lijst.map(kaart).join('');
+    telling.textContent = lijst.length === 1 ? '1 woning' : `${lijst.length} woningen`;
+    leeg.hidden = lijst.length > 0;
+
+    const p = new URLSearchParams();
+    for (const [k, v] of Object.entries(f)) if (v) p.set(k, v);
+    if (s !== 'nieuw') p.set('sorteer', s);
+    history.replaceState(null, '', p.toString() ? '?' + p : location.pathname);
+  }
+
+  form.addEventListener('change', toon);
+  sorteer.addEventListener('change', toon);
+  document.getElementById('wis').addEventListener('click', () => { form.reset(); toon(); });
+  toon();
+})();
+</script>
+{% endblock %}

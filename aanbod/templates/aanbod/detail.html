@@ -1,0 +1,48 @@
+{% extends "aanbod/base.html" %}
+{% load humanize %}
+{% block titel %}{{ woning.adres }}, {{ woning.woonplaats }} – {{ PORTAAL_NAAM }}{% endblock %}
+{% block beschrijving %}{{ woning.get_woningtype_display }} te koop in {{ woning.woonplaats }}{% if woning.vraagprijs %} voor € {{ woning.vraagprijs|intcomma }}{% endif %}.{% endblock %}
+{% block inhoud %}
+<div class="detail">
+  <p class="kruimel"><a href="{{ BASIS }}">← Terug naar het aanbod</a></p>
+  <div class="detail__raster">
+    <div class="detail__foto">
+      {% if foto %}<img src="{{ foto }}" alt="Foto van {{ woning.adres }}">{% else %}<div class="geen-foto">Geen foto</div>{% endif %}
+      <div class="labels">
+        {% if woning.is_nieuw %}<span class="label label--nieuw">Nieuw</span>{% endif %}
+        {% if woning.status != "beschikbaar" %}<span class="label label--{{ woning.status }}">{{ woning.get_status_display }}</span>{% endif %}
+      </div>
+    </div>
+    <div class="detail__info">
+      <h1>{{ woning.adres|default:"Adres onbekend" }}</h1>
+      <p class="plaats">{{ woning.postcode }} {{ woning.woonplaats }}</p>
+      <p class="prijs prijs--groot">{% if woning.vraagprijs %}€ {{ woning.vraagprijs|intcomma }} <small>{{ woning.prijs_conditie }}</small>{% else %}Prijs op aanvraag{% endif %}</p>
+      <dl class="tabel">
+        {% for label, waarde in hoofd %}<dt>{{ label }}</dt><dd>{{ waarde }}</dd>{% endfor %}
+      </dl>
+      <a class="knop" href="{{ woning.url }}" target="_blank" rel="noopener">Bekijk bij {{ woning.makelaar.naam }} ↗</a>
+      <div class="makelaarblok">
+        <p><strong>{{ woning.makelaar.naam }}</strong></p>
+        {% if woning.makelaar.straat %}<p>{{ woning.makelaar.straat }}<br>{{ woning.makelaar.postcode }} {{ woning.makelaar.plaats }}</p>{% endif %}
+        {% if woning.makelaar.telefoon %}<p>Tel. <a href="tel:{{ woning.makelaar.telefoon }}">{{ woning.makelaar.telefoon }}</a></p>{% endif %}
+      </div>
+    </div>
+  </div>
+  {% if woning.omschrijving %}
+  <section class="detail__tekst">
+    <h2>Omschrijving</h2>
+    <p>{{ woning.omschrijving|truncatechars:400 }}</p>
+    <p><a href="{{ woning.url }}" target="_blank" rel="noopener">Lees de volledige omschrijving bij de makelaar ↗</a></p>
+  </section>
+  {% endif %}
+  {% if woning.kenmerken %}
+  <section class="detail__tekst">
+    <h2>Alle kenmerken</h2>
+    <dl class="tabel tabel--breed">
+      {% for label, waarde in woning.kenmerken.items %}<dt>{{ label|capfirst }}</dt><dd>{{ waarde }}</dd>{% endfor %}
+    </dl>
+  </section>
+  {% endif %}
+  <p class="klein">In ons overzicht sinds {{ woning.eerst_gezien|date:"j F Y" }}. Laatst gecontroleerd {{ woning.laatst_gecontroleerd|date:"j F Y"|default:"–" }}.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titel %}{{ PORTAAL_NAAM }}{% endblock %}</title>
+  <meta name="description" content="{% block beschrijving %}Het complete woningaanbod van Zeeuwse makelaars op één plek.{% endblock %}">
+  <link rel="stylesheet" href="{{ BASIS }}static/aanbod/portaal.css">
+</head>
+<body>
+  <header class="kop">
+    <div class="kop__binnen">
+      <a class="logo" href="{{ BASIS }}">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4 3 15h4v13h7v-8h4v8h7V15h4z" fill="currentColor"/></svg>
+        <span>{{ PORTAAL_NAAM }}</span>
+      </a>
+      <nav class="menu">
+        <a href="{{ BASIS }}">Koopwoningen</a>
+        <a href="{{ BASIS }}makelaars/">Aangesloten makelaars</a>
+      </nav>
+    </div>
+  </header>
+  <main>{% block inhoud %}{% endblock %}</main>
+  <footer class="voet">
+    <div class="voet__binnen">
+      <p><strong>{{ PORTAAL_NAAM }}</strong> – het woningaanbod van aangesloten Zeeuwse makelaars, dagelijks bijgewerkt.</p>
+      <p class="klein">Alle informatie is afkomstig van de websites van de makelaars. Aan de getoonde gegevens kunnen geen rechten worden ontleend; kijk voor actuele informatie altijd bij de makelaar.</p>
+    </div>
+  </footer>
+</body>
+</html>

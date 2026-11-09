@@ -1,0 +1,12 @@
+{
+  "name": "Woningportaal – beheer",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "postCreateCommand": "pip install -r requirements.txt && bash scripts/beheer.sh voorbereiden",
+  "postAttachCommand": "bash scripts/beheer.sh start",
+  "forwardPorts": [8000],
+  "portsAttributes": { "8000": { "label": "Woningportaal", "onAutoForward": "openBrowser" } },
+  "containerEnv": {
+    "PORTAAL_DB_PATH": "/workspaces/${localWorkspaceFolderBasename}/databranch/portaal.sqlite3",
+    "PORTAAL_MEDIA_ROOT": "/workspaces/${localWorkspaceFolderBasename}/databranch/media"
+  }
+}

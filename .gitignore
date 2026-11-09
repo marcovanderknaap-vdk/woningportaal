@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+/data/
+/site/
+/staticfiles/
+/databranch/
+.env
+.venv/
