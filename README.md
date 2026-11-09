@@ -86,4 +86,5 @@ SQLite volstaat voor duizenden woningen; PostgreSQL kan later.
 
 ## Instellingen (omgevingsvariabelen)
 `PORTAAL_NAAM`, `NIEUW_DAGEN` (14), `VERKOCHT_ZICHTBAAR_DAGEN` (30), `VERKOCHT_CONTROLE_DAGEN` (30),
-`SCRAPER_MIN_DELAY` (2 s), `FOTO_MAX_BREEDTE` (1200 px), `RAPPORT_EMAIL`, `EMAIL_*`.
+`SCRAPER_MIN_DELAY` (2 s), `FOTO_MAX_BREEDTE` (1200 px), `RAPPORT_EMAIL`, `EMAIL_*`,
+`PORTAAL_INDEXEREN` (uit: elke pagina krijgt `noindex` en robots.txt blokkeert alles; zet op `true` bij de livegang).

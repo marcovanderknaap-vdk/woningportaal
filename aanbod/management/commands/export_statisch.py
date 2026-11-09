@@ -47,6 +47,8 @@ class Command(BaseCommand):
         statisch = Path(settings.BASE_DIR) / "aanbod" / "static"
         shutil.copytree(statisch, uit / "static")
         (uit / ".nojekyll").write_text("")
+        request = rf.get("/robots.txt")
+        (uit / "robots.txt").write_bytes(views.robots_txt(request).content)
         (uit / "404.html").write_text(
             f'<!doctype html><meta charset="utf-8"><title>Niet gevonden</title>'
             f'<p>Deze woning staat niet (meer) in het overzicht. <a href="{basis}">Naar het aanbod</a></p>'

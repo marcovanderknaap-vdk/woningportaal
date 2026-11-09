@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block titel %}{{ PORTAAL_NAAM }}{% endblock %}</title>
   <meta name="description" content="{% block beschrijving %}Het complete woningaanbod van Zeeuwse makelaars op één plek.{% endblock %}">
+  {% if not INDEXEREN %}<meta name="robots" content="noindex, nofollow">{% endif %}
   <link rel="stylesheet" href="{{ BASIS }}static/aanbod/portaal.css">
 </head>
 <body>

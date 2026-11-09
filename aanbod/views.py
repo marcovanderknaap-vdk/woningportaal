@@ -2,6 +2,7 @@ import json
 from collections import Counter
 
 from django.conf import settings
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 
 from .models import Makelaar, Woning
@@ -97,3 +98,11 @@ def makelaars(request):
     for m in lijst:
         m.aantal = Woning.objects.zichtbaar().filter(makelaar=m).count()
     return render(request, "aanbod/makelaars.html", {"makelaars": lijst})
+
+
+def robots_txt(request):
+    if settings.PORTAAL_INDEXEREN:
+        regels = ["User-agent: *", "Disallow: /beheer/"]
+    else:
+        regels = ["User-agent: *", "Disallow: /"]
+    return HttpResponse("\n".join(regels) + "\n", content_type="text/plain")

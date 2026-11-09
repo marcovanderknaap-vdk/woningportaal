@@ -92,6 +92,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # --- Portaal ---------------------------------------------------------------
 PORTAAL_NAAM = env("PORTAAL_NAAM", "Zeeuws Woningaanbod")
+# Mogen zoekmachines de site indexeren? Standaard uit zolang het een test is.
+PORTAAL_INDEXEREN = env_bool("PORTAAL_INDEXEREN", False)
 # Aantal dagen dat een woning het label 'nieuw' krijgt.
 NIEUW_DAGEN = int(env("NIEUW_DAGEN", "14"))
 # Hoe lang verkochte woningen nog zichtbaar blijven op de site.

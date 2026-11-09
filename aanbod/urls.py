@@ -7,4 +7,5 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("woning/<int:pk>/", views.detail, name="detail"),
     path("makelaars/", views.makelaars, name="makelaars"),
+    path("robots.txt", views.robots_txt, name="robots"),
 ]
