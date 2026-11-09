@@ -177,6 +177,13 @@ class Controle:
                 run.offline += 1
             woning.save(update_fields=["online", "laatst_gecontroleerd"])
             return
+        if res.is_huur or res.geen_woning:
+            if woning.online:
+                self._log(f"GEEN KOOPWONING (meer), offline gezet: {woning}")
+                run.offline += 1
+            woning.online = False
+            woning.save(update_fields=["online", "laatst_gecontroleerd"])
+            return
         if not woning.online:
             self._log(f"WEER ONLINE: {woning}")
         woning.online = True

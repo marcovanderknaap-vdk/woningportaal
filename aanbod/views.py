@@ -19,7 +19,7 @@ PRIJSKLASSEN = [
 def _media_url(request, bestand):
     if not bestand:
         return ""
-    return getattr(request, "basis_url", "/") + settings.MEDIA_URL + bestand.name
+    return getattr(request, "basis_url", "/") + settings.MEDIA_URL.lstrip("/") + bestand.name
 
 
 def woning_json(request, w):
@@ -76,9 +76,9 @@ def detail(request, pk):
         ("Woonoppervlakte", f"{woning.woonoppervlakte} m²" if woning.woonoppervlakte else ""),
         ("Perceel", f"{woning.perceeloppervlakte:,} m²".replace(",", ".") if woning.perceeloppervlakte else ""),
         ("Inhoud", f"{woning.inhoud} m³" if woning.inhoud else ""),
-        ("Kamers", woning.kamers or ""),
-        ("Slaapkamers", woning.slaapkamers or ""),
-        ("Bouwjaar", woning.bouwjaar or ""),
+        ("Kamers", str(woning.kamers) if woning.kamers else ""),
+        ("Slaapkamers", str(woning.slaapkamers) if woning.slaapkamers else ""),
+        ("Bouwjaar", str(woning.bouwjaar) if woning.bouwjaar else ""),
         ("Energielabel", woning.energielabel),
     ]
     return render(

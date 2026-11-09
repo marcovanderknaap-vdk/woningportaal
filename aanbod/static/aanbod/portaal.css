@@ -35,7 +35,7 @@ h1, h2 { line-height: 1.2; color: var(--blauw); }
 .kop__binnen, .voet__binnen, .held__binnen, .resultaten, .detail {
   max-width: 1200px; margin: 0 auto; padding-left: 16px; padding-right: 16px;
 }
-.kop__binnen { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; flex-wrap: wrap; }
+.kop__binnen { display: flex; align-items: center; justify-content: space-between; gap: 8px 16px; min-height: 64px; flex-wrap: wrap; padding-top: 10px; padding-bottom: 10px; }
 .logo { display: flex; align-items: center; gap: 10px; color: var(--wit); text-decoration: none; font-weight: 700; font-size: 1.15rem; }
 .logo svg { width: 30px; height: 30px; color: var(--oranje); }
 .menu { display: flex; gap: 20px; flex-wrap: wrap; }

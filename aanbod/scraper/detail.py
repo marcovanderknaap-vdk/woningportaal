@@ -52,7 +52,7 @@ STATUS_PATRONEN = [
 ]
 
 GEEN_WONING = re.compile(
-    r"garage(box)?\b|parkeer|bedrijfs|kantoor|winkel|horeca|ligplaats|berging\b|stalling|belegging", re.I
+    r"overig\s*og\b|overig onroerend|garage(box)?\b|parkeer|bedrijfs|kantoor|winkel|horeca|ligplaats|berging\b|stalling|belegging", re.I
 )
 
 
@@ -189,6 +189,8 @@ def _label_paren(soup):
         label = _schoon(label).rstrip(":").strip()
         waarde = re.sub(r"(\d)\s*m\s?([23])\b", lambda m: m.group(1) + " m" + ("²" if m.group(2) == "2" else "³"), _schoon(waarde))
         if not label or not waarde or len(label) > 60 or len(waarde) > 300:
+            return
+        if not re.search(r"\w", waarde):  # bijv. '>' of '-'
             return
         sleutel = label.lower()
         if waarde.lower() == sleutel:
