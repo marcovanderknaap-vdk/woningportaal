@@ -24,6 +24,8 @@ jobs:
   ophalen:
     runs-on: ubuntu-latest
     timeout-minutes: 240
+    outputs:
+      site: ${{ steps.site.outputs.klaar }}
     env:
       PORTAAL_DB_PATH: ${{ github.workspace }}/databranch/portaal.sqlite3
       PORTAAL_MEDIA_ROOT: ${{ github.workspace }}/databranch/media
@@ -36,9 +38,9 @@ jobs:
       EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
       RAPPORT_EMAIL: ${{ secrets.RAPPORT_EMAIL }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: pip
@@ -77,9 +79,12 @@ jobs:
       - name: Statische site maken
         run: python manage.py export_statisch --uit site --basis "/${{ github.event.repository.name }}/"
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: site
+
+      - id: site
+        run: echo "klaar=ja" >> "$GITHUB_OUTPUT"
 
       - name: Melden als er een probleem was
         if: steps.controle.outputs.probleem == '1'
@@ -89,7 +94,8 @@ jobs:
 
   publiceren:
     needs: ophalen
-    if: always() && needs.ophalen.result != 'cancelled'
+    # Ook publiceren als het ophalen bij een makelaar misging, zolang de site gemaakt is
+    if: always() && needs.ophalen.outputs.site == 'ja'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

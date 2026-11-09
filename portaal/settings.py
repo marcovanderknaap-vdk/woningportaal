@@ -10,12 +10,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 def env(name, default=None):
-    return os.environ.get(name, default)
+    # Een lege variabele (bijv. een niet-ingevuld GitHub-secret) telt als 'niet ingesteld'
+    value = os.environ.get(name)
+    return default if value in (None, "") else value
 
 
 def env_bool(name, default=False):
     value = os.environ.get(name)
-    if value is None:
+    if value in (None, ""):
         return default
     return value.lower() in {"1", "true", "yes", "ja", "on"}
 
