@@ -67,6 +67,9 @@ python manage.py runserver              # http://127.0.0.1:8000/ en /beheer/
 
 * **De dagelijkse controle** draait als GitHub Actions-workflow (`.github/workflows/dagelijks.yml`).
   Database en foto's worden bewaard in de branch `data`.
+* **Alleen de site bijwerken** (zonder het aanbod opnieuw op te halen): *Actions → Dagelijkse controle →
+  Run workflow*, vink **"Alleen de site bijwerken"** aan. Dit gebeurt ook automatisch na elke codewijziging
+  op `main` en duurt een paar minuten.
 * **De publieke site** wordt na elke controle gepubliceerd op GitHub Pages:
   `https://<gebruiker>.github.io/<repository>/`.
   Zet dit eenmalig aan: *Settings → Pages → Source: GitHub Actions*.

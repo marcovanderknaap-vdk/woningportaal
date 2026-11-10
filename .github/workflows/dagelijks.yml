@@ -1,5 +1,11 @@
 # Dagelijkse controle van het aanbod + publicatie van de testsite op GitHub Pages.
 #
+# Twee standen:
+#  - volledig: aanbod bij alle makelaars controleren, gegevens bewaren en site publiceren
+#    (elke ochtend vanzelf, of handmatig via Run workflow);
+#  - alleen de site: de site opnieuw opbouwen uit de bestaande gegevens, zonder ophalen
+#    (handmatig met het vinkje 'Alleen de site bijwerken', en automatisch na een codewijziging).
+#
 # De database en foto's worden bewaard in de aparte branch 'data', zodat de
 # code-branch schoon blijft. Bij een storing stuurt GitHub automatisch een
 # e-mail naar de eigenaar van de repository; met de secrets EMAIL_* en
@@ -10,6 +16,14 @@ on:
   schedule:
     - cron: "17 4 * * *"   # elke dag rond 05:17/06:17 Nederlandse tijd
   workflow_dispatch:        # handmatig starten via het tabblad Actions
+    inputs:
+      alleen_site:
+        description: "Alleen de site bijwerken (aanbod niet opnieuw ophalen)"
+        type: boolean
+        default: false
+  push:                     # na een codewijziging: alleen de site opnieuw opbouwen
+    branches: [main]
+    paths-ignore: ["**.md"]
 
 permissions:
   contents: write
@@ -27,6 +41,8 @@ jobs:
     outputs:
       site: ${{ steps.site.outputs.klaar }}
     env:
+      # Ophalen alleen bij de dagelijkse run of een handmatige run zonder vinkje
+      OPHALEN: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && !inputs.alleen_site) }}
       PORTAAL_DB_PATH: ${{ github.workspace }}/databranch/portaal.sqlite3
       PORTAAL_MEDIA_ROOT: ${{ github.workspace }}/databranch/media
       DJANGO_DEBUG: "false"
@@ -64,10 +80,11 @@ jobs:
 
       - name: Aanbod controleren
         id: controle
+        if: env.OPHALEN == 'true'
         run: python manage.py ophalen || echo "probleem=1" >> "$GITHUB_OUTPUT"
 
       - name: Database en foto's bewaren
-        if: always()
+        if: always() && env.OPHALEN == 'true'
         run: |
           cd databranch
           git config user.name "woningportaal-bot"
