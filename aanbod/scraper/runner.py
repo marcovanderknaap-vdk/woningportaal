@@ -297,7 +297,7 @@ class Controle:
             woning.postcode = res.postcode[:10]
         if not bestaand or not woning.woonplaats:
             woning.woonplaats = res.woonplaats[:100]
-        woning.woningtype = res.woningtype
+        woning.categorie, woning.soort = res.categorie, res.soort
         for veld in ("woonoppervlakte", "perceeloppervlakte", "inhoud", "kamers", "slaapkamers", "bouwjaar"):
             waarde = getattr(res, veld)
             if waarde is not None:

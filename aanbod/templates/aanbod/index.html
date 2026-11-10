@@ -24,10 +24,11 @@
           {% for code, label in categorieen %}<option value="{{ code }}">{{ label }}</option>{% endfor %}
         </select>
       </label>
-      <label class="veld" for="f-type"><span>Soort woning</span>
-        <select id="f-type" name="type">
+      <label class="veld" for="f-soort"><span id="f-soort-label">Soort</span>
+        <select id="f-soort" name="soort">
           <option value="">Alle soorten</option>
-          {% for code, label in types %}<option value="{{ code }}">{{ label }}</option>{% endfor %}
+          <optgroup label="Woning">{% for code, label in soorten.woning %}<option value="{{ code }}">{{ label }}</option>{% endfor %}</optgroup>
+          <optgroup label="Appartement">{% for code, label in soorten.appartement %}<option value="{{ code }}">{{ label }}</option>{% endfor %}</optgroup>
         </select>
       </label>
       <label class="vink" for="f-besch"><input type="checkbox" id="f-besch" name="beschikbaar" value="1"> Alleen beschikbaar</label>
@@ -93,12 +94,32 @@
   const basis = {{ BASIS_JSON|safe }};
   const KAART = {{ KAART_JSON|safe }};
 
+  // Keuzelijst 'Soort' volgt de gekozen categorie (woning / appartement)
+  const SOORTEN = {{ soorten_json|safe }};
+  const catSelect = document.getElementById('f-categorie');
+  const soortSelect = document.getElementById('f-soort');
+  const soortLabel = document.getElementById('f-soort-label');
+  function vulSoorten() {
+    const cat = catSelect.value, gekozen = soortSelect.value;
+    const opties = lijst => lijst.map(([c, l]) => `<option value="${c}">${esc(l)}</option>`).join('');
+    let html = '<option value="">Alle soorten</option>';
+    if (cat === 'woning' || cat === 'appartement') html += opties(SOORTEN[cat]);
+    else if (!cat) html += `<optgroup label="Woning">${opties(SOORTEN.woning)}</optgroup><optgroup label="Appartement">${opties(SOORTEN.appartement)}</optgroup>`;
+    soortSelect.innerHTML = html;
+    soortSelect.disabled = cat === 'bouwgrond';
+    soortLabel.textContent = cat === 'woning' ? 'Soort woning' : cat === 'appartement' ? 'Soort appartement' : 'Soort';
+    // Vorige keuze behouden als die in de nieuwe lijst voorkomt
+    soortSelect.value = [...soortSelect.options].some(o => o.value === gekozen) ? gekozen : '';
+  }
+
   // Filters, sortering en pagina uit de URL halen (zodat een selectie te delen is)
   const params = new URLSearchParams(location.search);
   for (const el of form.elements) {
     if (!el.name || !params.has(el.name)) continue;
     if (el.type === 'checkbox') el.checked = params.get(el.name) === '1'; else el.value = params.get(el.name);
   }
+  vulSoorten();
+  if (params.has('soort')) soortSelect.value = params.get('soort');
   if (params.has('sorteer')) sorteer.value = params.get('sorteer');
   if (params.has('per')) perSelect.value = params.get('per');
   if (params.has('pagina')) pagina = Math.max(1, parseInt(params.get('pagina'), 10) || 1);
@@ -130,7 +151,7 @@
           <p class="kaart__plaats">${esc([w.postcode, w.plaats].filter(Boolean).join(' '))}</p>
           <p class="weune-prijs">${prijs(w)}</p>
           ${k ? `<p class="kenmerken">${k}</p>` : ''}
-          <p class="kaart__soort">${esc(w.typeLabel)}</p>
+          <p class="kaart__soort">${esc(w.soortLabel)}</p>
         </div>
         <div class="kaart__makelaar">${w.logo ? `<img src="${esc(w.logo)}" alt="${esc(w.makelaar)}" loading="lazy">` : `<span>${esc(w.makelaar)}</span>`}</div>
       </a>
@@ -159,7 +180,7 @@
     const lijst = woningen.filter(w =>
       (!f.plaats || w.plaats === f.plaats) &&
       (!f.categorie || w.categorie === f.categorie) &&
-      (!f.type || w.type === f.type) &&
+      (!f.soort || w.soort === f.soort) &&
       (!f.beschikbaar || w.status === 'beschikbaar') &&
       (!f.prijs || (w.prijs !== null && (min === null || w.prijs >= min) && (max === null || w.prijs < max)))
     );
@@ -274,7 +295,7 @@
 
   // Bij een andere selectie altijd terug naar pagina 1
   const opnieuw = () => { pagina = 1; toon(); };
-  form.addEventListener('change', opnieuw);
+  form.addEventListener('change', e => { if (e.target === catSelect) vulSoorten(); opnieuw(); });
   sorteer.addEventListener('change', opnieuw);
   perSelect.addEventListener('change', opnieuw);
   nav.addEventListener('click', e => {

@@ -9,6 +9,7 @@ from django.http import FileResponse, Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
 
 from .models import Makelaar, Woning
+from .scraper.soort import SOORT_LABEL, WEERGAVE_APPARTEMENT, WEERGAVE_WONING
 
 PRIJSKLASSEN = [
     ("0-200000", "tot € 200.000", 0, 200_000),
@@ -20,13 +21,11 @@ PRIJSKLASSEN = [
 ]
 
 CATEGORIEEN = [("woning", "Woning"), ("appartement", "Appartement"), ("bouwgrond", "Bouwgrond")]
+SOORTEN = {
+    "woning": [(c, SOORT_LABEL[c]) for c in WEERGAVE_WONING],
+    "appartement": [(c, SOORT_LABEL[c]) for c in WEERGAVE_APPARTEMENT],
+}
 PER_PAGINA = [12, 24, 48, 96]
-
-
-def categorie(woningtype):
-    if woningtype in ("appartement", "bouwgrond"):
-        return woningtype
-    return "woning"
 
 
 def _media_url(request, bestand):
@@ -47,9 +46,9 @@ def woning_json(request, w):
         "conditie": w.prijs_conditie,
         "status": w.status,
         "statusLabel": w.get_status_display(),
-        "type": w.woningtype,
-        "categorie": categorie(w.woningtype),
-        "typeLabel": w.get_woningtype_display(),
+        "categorie": w.categorie,
+        "soort": w.soort,
+        "soortLabel": w.soort_label,
         "opp": w.woonoppervlakte,
         "perceel": w.perceeloppervlakte,
         "kamers": w.kamers,
@@ -78,8 +77,9 @@ def index(request):
             "aantal": len(data),
             "plaatsen": sorted(plaatsen.items()),
             "prijsklassen": PRIJSKLASSEN,
-            "types": Woning.Type.choices,
             "categorieen": CATEGORIEEN,
+            "soorten": SOORTEN,
+            "soorten_json": json.dumps(SOORTEN, ensure_ascii=False),
             "per_pagina": PER_PAGINA,
             "statussen": Woning.Status.choices,
             "makelaars_aantal": Makelaar.objects.filter(actief=True).count(),
@@ -92,7 +92,8 @@ def detail(request, pk):
     woning = get_object_or_404(Woning.objects.select_related("makelaar"), pk=pk, verborgen=False)
     hoofd = [
         ("Status", woning.get_status_display()),
-        ("Soort", woning.get_woningtype_display()),
+        ("Soort appartement" if woning.categorie == "appartement" else "Soort woning" if woning.categorie == "woning" else "Soort",
+         woning.soort_label),
         ("Woonoppervlakte", f"{woning.woonoppervlakte} m²" if woning.woonoppervlakte else ""),
         ("Perceel", f"{woning.perceeloppervlakte:,} m²".replace(",", ".") if woning.perceeloppervlakte else ""),
         ("Inhoud", f"{woning.inhoud} m³" if woning.inhoud else ""),

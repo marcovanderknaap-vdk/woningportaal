@@ -5,6 +5,8 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
+from .scraper.soort import SOORT_KEUZES
+
 
 class Makelaar(models.Model):
     class BronType(models.TextChoices):
@@ -126,11 +128,8 @@ class Woning(models.Model):
         VERKOCHT_OV = "verkocht_ov", "Verkocht onder voorbehoud"
         VERKOCHT = "verkocht", "Verkocht"
 
-    class Type(models.TextChoices):
-        VRIJSTAAND = "vrijstaand", "Vrijstaande woning"
-        TWEE_ONDER_EEN_KAP = "2-onder-1-kap", "2-onder-1-kapwoning"
-        HOEKWONING = "hoekwoning", "Hoekwoning"
-        TUSSENWONING = "tussenwoning", "Tussenwoning"
+    class Categorie(models.TextChoices):
+        WONING = "woning", "Woning"
         APPARTEMENT = "appartement", "Appartement"
         BOUWGROND = "bouwgrond", "Bouwgrond"
         OVERIG = "overig", "Overig"
@@ -148,7 +147,11 @@ class Woning(models.Model):
 
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.BESCHIKBAAR, db_index=True)
     status_tekst = models.CharField("status zoals op de site", max_length=100, blank=True)
-    woningtype = models.CharField(max_length=20, choices=Type.choices, default=Type.OVERIG, db_index=True)
+    categorie = models.CharField(max_length=20, choices=Categorie.choices, default=Categorie.OVERIG, db_index=True)
+    soort = models.CharField(
+        max_length=30, choices=SOORT_KEUZES, blank=True, db_index=True,
+        help_text="Soort woning of soort appartement (leeg = niet vermeld door de makelaar).",
+    )
 
     woonoppervlakte = models.PositiveIntegerField("woonoppervlakte (m²)", null=True, blank=True)
     perceeloppervlakte = models.PositiveIntegerField("perceeloppervlakte (m²)", null=True, blank=True)
@@ -205,6 +208,11 @@ class Woning(models.Model):
 
     def __str__(self):
         return f"{self.adres}, {self.woonplaats}" if self.adres else self.url
+
+    @property
+    def soort_label(self):
+        """'Tussenwoning', of de categorie ('Appartement') als de soort onbekend is."""
+        return self.get_soort_display() if self.soort else self.get_categorie_display()
 
     @property
     def is_nieuw(self):

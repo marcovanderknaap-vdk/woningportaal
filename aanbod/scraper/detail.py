@@ -15,6 +15,7 @@ from urllib.parse import urljoin, urlsplit
 from bs4 import BeautifulSoup
 
 from .plaatsen import zoek_plaats
+from .soort import classificeer
 
 # Label op de site (kleine letters, zonder ':') -> intern veld
 LABELS = {
@@ -67,7 +68,8 @@ class Resultaat:
     prijs_conditie: str = ""
     status: str | None = None  # None = niet gevonden
     status_tekst: str = ""
-    woningtype: str = "overig"
+    categorie: str = "overig"
+    soort: str = ""
     woonoppervlakte: int | None = None
     perceeloppervlakte: int | None = None
     inhoud: int | None = None
@@ -124,46 +126,6 @@ def normaliseer_status(tekst):
         if patroon.search(tekst):
             return code
     return None
-
-
-def normaliseer_type(*teksten):
-    t = " ".join(x for x in teksten if x).lower()
-    if not t:
-        return "overig"
-    if re.search(r"bouwgrond|bouwkavel|\bkavel", t):
-        return "bouwgrond"
-    if re.search(r"appartement|bovenwoning|benedenwoning|maisonnette|penthouse|portiek|galerij|flat\b|studio|bovenhuis|benedenhuis", t):
-        return "appartement"
-    if re.search(r"2[\s-]?onder[\s-]?1[\s-]?kap|twee[\s-]?onder[\s-]?([eé]{1,2}n|1)[\s-]?kap|halfvrijstaand|half vrijstaand|geschakelde 2", t):
-        return "2-onder-1-kap"
-    if re.search(r"hoekwoning|eindwoning|hoekhuis", t):
-        return "hoekwoning"
-    if re.search(r"tussenwoning|rijwoning|tussenhuis|rijtjeshuis", t):
-        return "tussenwoning"
-    if re.search(r"vrijstaand|villa|landhuis|bungalow|woonboerderij|boerderij", t):
-        return "vrijstaand"
-    if re.search(r"geschakeld", t):
-        return "2-onder-1-kap"
-    return "overig"
-
-
-TYPE_WOORDEN = {
-    "vrijstaand": r"vrijstaande (woning|villa|boerderij|woonboerderij)|\bvilla\b|landhuis|bungalow|woonboerderij",
-    "2-onder-1-kap": r"2[\s-]?onder[\s-]?1[\s-]?kap|twee[\s-]?onder[\s-]?([eé]{1,2}n|1)[\s-]?kap|halfvrijstaand|half vrijstaand|geschakelde (woning|hoekwoning|villa)",
-    "hoekwoning": r"hoekwoning|eindwoning",
-    "tussenwoning": r"tussenwoning|rijwoning",
-    "appartement": r"\bappartement\b|bovenwoning|benedenwoning|penthouse|maisonnette",
-    "bouwgrond": r"bouwgrond|bouwkavel",
-}
-
-
-def type_uit_tekst(tekst):
-    tekst = tekst.lower()
-    telling = {t: len(re.findall(p, tekst)) for t, p in TYPE_WOORDEN.items()}
-    beste = max(telling, key=telling.get)
-    if telling[beste] == 0 or list(telling.values()).count(telling[beste]) > 1:
-        return "overig"
-    return beste
 
 
 def _schoon(s):
@@ -468,16 +430,10 @@ def parse_detail(html, url):
     pagina_omschrijving = _omschrijving_uit_pagina(soup)
     res.omschrijving = (pagina_omschrijving or og_beschrijving)[:600]
 
+    # Categorie (woning/appartement/...) en soort (tussenwoning, portiekflat, ...)
+    lange_tekst = pagina_omschrijving or " ".join(f for f in _tekstlijst(soup) if len(f) > 80)
+    res.categorie, res.soort = classificeer(res.kenmerken, titel, lange_tekst)
     soort, soort_obj, type_ = veld("soort"), veld("soort_object"), veld("type")
-    res.woningtype = normaliseer_type(soort, type_, soort_obj)
-    if res.woningtype == "overig":
-        res.woningtype = normaliseer_type(titel)
-    if res.woningtype == "overig" and pagina_omschrijving:
-        # Bijv. Kuub noemt alleen 'Eengezinswoning'; de omschrijving zegt 'Deze fijne hoekwoning …'
-        res.woningtype = type_uit_tekst(pagina_omschrijving)
-    if res.woningtype == "overig":
-        # Laatste redmiddel: welk woningtype wordt het vaakst genoemd op de hele pagina?
-        res.woningtype = type_uit_tekst(" ".join(f for f in _tekstlijst(soup) if len(f) > 80))
-    if GEEN_WONING.search(f"{soort} {soort_obj} {type_}") and res.woningtype in ("overig",):
+    if GEEN_WONING.search(f"{soort} {soort_obj} {type_}") and res.categorie == "overig":
         res.geen_woning = True
     return res

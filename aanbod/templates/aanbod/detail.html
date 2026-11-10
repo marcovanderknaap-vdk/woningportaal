@@ -2,7 +2,7 @@
 {% load humanize weune %}
 {% block titel %}{{ woning.adres }}, {{ woning.woonplaats }} – {{ PORTAAL_NAAM }}{% endblock %}
 {% block og_titel %}{{ woning.adres }}, {{ woning.woonplaats }}{% endblock %}
-{% block beschrijving %}{{ woning.get_woningtype_display }} te koop in {{ woning.woonplaats }}{% if woning.vraagprijs %} voor € {{ woning.vraagprijs|intcomma }}{% endif %}, aangeboden door {{ woning.makelaar.naam }}.{% endblock %}
+{% block beschrijving %}{{ woning.soort_label }} te koop in {{ woning.woonplaats }}{% if woning.vraagprijs %} voor € {{ woning.vraagprijs|intcomma }}{% endif %}, aangeboden door {{ woning.makelaar.naam }}.{% endblock %}
 {% block inhoud %}
 {% include "aanbod/includes/iconen.html" %}
 <div class="pagina">

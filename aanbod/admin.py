@@ -127,10 +127,10 @@ class HistorieInline(admin.TabularInline):
 
 @admin.register(Woning)
 class WoningAdmin(admin.ModelAdmin):
-    list_display = ("miniatuur", "adres", "woonplaats", "makelaar", "vraagprijs", "status", "woningtype",
+    list_display = ("miniatuur", "adres", "woonplaats", "makelaar", "vraagprijs", "status", "categorie", "soort",
                     "eerst_gezien", "nieuw", "online", "verborgen")
     list_display_links = ("miniatuur", "adres")
-    list_filter = ("status", "woningtype", "online", "verborgen", "makelaar", "woonplaats")
+    list_filter = ("status", "categorie", "soort", "online", "verborgen", "makelaar", "woonplaats")
     list_editable = ("verborgen",)
     search_fields = ("adres", "woonplaats", "postcode", "url")
     date_hierarchy = "eerst_gezien"
@@ -140,7 +140,7 @@ class WoningAdmin(admin.ModelAdmin):
                        "laatst_gecontroleerd", "status_gewijzigd", "status_tekst", "foto_bron_url")
     fieldsets = (
         (None, {"fields": ("foto_groot", "makelaar", "url_link", ("adres", "postcode", "woonplaats"))}),
-        ("Prijs en status", {"fields": (("vraagprijs", "prijs_conditie"), "prijs_tekst", ("status", "status_tekst"), "woningtype")}),
+        ("Prijs en status", {"fields": (("vraagprijs", "prijs_conditie"), "prijs_tekst", ("status", "status_tekst"), ("categorie", "soort"))}),
         ("Objectdetails", {"fields": (("woonoppervlakte", "perceeloppervlakte", "inhoud"), ("kamers", "slaapkamers", "bouwjaar", "energielabel"), "omschrijving", "kenmerken_tabel")}),
         ("Zichtbaarheid", {"fields": ("verborgen", "online", "eerste_import")}),
         ("Tijdlijn", {"fields": ("eerst_gezien", "laatst_gezien", "laatst_gecontroleerd", "status_gewijzigd")}),

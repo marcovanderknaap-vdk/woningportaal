@@ -4,7 +4,8 @@ from django.test import TestCase
 from django.utils import timezone
 
 from .models import Makelaar, Woning
-from .scraper.detail import normaliseer_status, normaliseer_type, parse_adres, parse_detail, parse_prijs
+from .scraper.detail import normaliseer_status, parse_adres, parse_detail, parse_prijs
+from .scraper.soort import classificeer
 from .scraper.discovery import kies_woninglinks
 from .scraper.plaatsen import zoek_plaats
 
@@ -23,12 +24,17 @@ class NormaliseerTest(TestCase):
         self.assertEqual(normaliseer_status("Verkocht"), "verkocht")
         self.assertEqual(normaliseer_status("Beschikbaar"), "beschikbaar")
 
-    def test_type(self):
-        self.assertEqual(normaliseer_type("Eengezinswoning", "Tussenwoning"), "tussenwoning")
-        self.assertEqual(normaliseer_type("Eengezinswoning", "2-onder-1-kapwoning"), "2-onder-1-kap")
-        self.assertEqual(normaliseer_type("Villa", "Vrijstaande woning"), "vrijstaand")
-        self.assertEqual(normaliseer_type("Bovenwoning"), "appartement")
-        self.assertEqual(normaliseer_type("Eengezinswoning", "Halfvrijstaande woning"), "2-onder-1-kap")
+    def test_soort(self):
+        self.assertEqual(classificeer({"Soort woonhuis": "Eengezinswoning", "Type woning": "Tussenwoning"}), ("woning", "tussenwoning"))
+        self.assertEqual(classificeer({"Type woning": "Geschakelde twee onder één kapwoning"}), ("woning", "geschakeld-2-onder-1-kap"))
+        self.assertEqual(classificeer({"Soort woonhuis": "twee onder een kapwoning"}), ("woning", "2-onder-1-kap"))
+        self.assertEqual(classificeer({"Type woning": "Halfvrijstaande woning"}), ("woning", "halfvrijstaand"))
+        self.assertEqual(classificeer({"Soort woning": "Villa"}), ("woning", "vrijstaand"))
+        self.assertEqual(classificeer({"Soort object": "Appartement", "Soort appartement": "portiekflat"}), ("appartement", "portiekflat"))
+        self.assertEqual(classificeer({"Soort woning": "Bovenwoning"}), ("appartement", "bovenwoning"))
+        self.assertEqual(classificeer({"Soort woonhuis": "Appartement"}), ("appartement", ""))
+        self.assertEqual(classificeer({"Soort woonhuis": "Eengezinswoning"}, "", "Deze fijne hoekwoning met tuin"), ("woning", "hoekwoning"))
+        self.assertEqual(classificeer({"Type": "Bouwgrond"}), ("bouwgrond", ""))
 
     def test_plaats(self):
         self.assertEqual(zoek_plaats("Spanjaardstraat 13 in Middelburg"), "Middelburg")
@@ -63,7 +69,7 @@ class DetailTest(TestCase):
         self.assertEqual((r.adres, r.postcode, r.woonplaats), ("Dorpsstraat 1", "4321 AB", "Goes"))
         self.assertEqual(r.vraagprijs, 350000)
         self.assertEqual(r.status, "verkocht_ov")
-        self.assertEqual(r.woningtype, "hoekwoning")
+        self.assertEqual((r.categorie, r.soort), ("woning", "hoekwoning"))
         self.assertEqual((r.woonoppervlakte, r.kamers, r.bouwjaar, r.energielabel), (120, 5, 1985, "B"))
         self.assertEqual(r.foto_url, "https://makelaar.nl/foto.jpg")
 
@@ -76,13 +82,13 @@ class OmschrijvingEnKenmerkenTest(TestCase):
     <p>Ruim en licht appartement met drie slaapkamers, moderne keuken en badkamer, twee balkons en een groene omgeving.</p>
     <p>De Statenlaan is gelegen in een rustige woonwijk op loopafstand van het centrum van Middelburg.</p>
     <div><span>110 m²</span><span>Kamers</span><span>Benieuwd of je de woning kan betalen?</span></div>
-    <dl><dt>Vraagprijs</dt><dd>€ 275.000,- k.k.</dd><dt>Aantal kamers</dt><dd>4</dd><dt>Soort woonhuis</dt><dd>Eengezinswoning</dd></dl>
+    <dl><dt>Vraagprijs</dt><dd>€ 275.000,- k.k.</dd><dt>Aantal kamers</dt><dd>4</dd></dl>
     </body></html>"""
 
     def test_omschrijving_van_pagina_niet_van_kantoor(self):
         r = parse_detail(self.HTML, "https://www.kuubmakelaars.nl/woning/statenlaan-8-middelburg/")
         self.assertTrue(r.omschrijving.startswith("Ruim en licht appartement"))
-        self.assertEqual(r.woningtype, "appartement")
+        self.assertEqual(r.categorie, "appartement")
 
     def test_losse_woorden_geen_kenmerk(self):
         r = parse_detail(self.HTML, "https://www.kuubmakelaars.nl/woning/statenlaan-8-middelburg/")
@@ -175,15 +181,6 @@ class PaginaTest(TestCase):
             self.assertEqual(r.status_code, 200, url)
             self.assertContains(r, f'aria-current="page"><span class="menu__lang">{actief}' if actief != "Makelaars"
                                 else 'aria-current="page">Makelaars')
-
-
-class CategorieTest(TestCase):
-    def test_categorie(self):
-        from .views import categorie
-        self.assertEqual(categorie("appartement"), "appartement")
-        self.assertEqual(categorie("tussenwoning"), "woning")
-        self.assertEqual(categorie("overig"), "woning")
-        self.assertEqual(categorie("bouwgrond"), "bouwgrond")
 
 
 class NieuwLabelTest(TestCase):

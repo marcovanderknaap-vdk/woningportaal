@@ -78,6 +78,7 @@ select {
   background-repeat: no-repeat; background-position: right 12px center;
 }
 select:hover { border-color: var(--weune-tekst-3); }
+select:disabled { background-color: var(--weune-oppervlak); color: var(--weune-tekst-3); cursor: not-allowed; }
 select.gekozen { background-color: var(--weune-golf-licht); border-color: var(--weune-blauw); color: var(--weune-nacht); font-weight: 500; }
 .vink {
   display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer;
