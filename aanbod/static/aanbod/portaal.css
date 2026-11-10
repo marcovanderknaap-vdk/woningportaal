@@ -184,8 +184,31 @@ select.gekozen { background-color: var(--weune-golf-licht); border-color: var(--
 
 /* ---- Makelaarsoverzicht ---------------------------------------------- */
 .makelaars { display: grid; gap: var(--weune-ruimte-4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); margin-top: var(--weune-ruimte-5); }
-.makelaars .paneel { display: grid; gap: 6px; align-content: start; }
-.makelaars h2 { font-size: var(--weune-fs-h4); margin: 0; }
+/* Makelaarskaart: vast logovak (zodat de kantoorgegevens op één lijn beginnen) en een
+   donkere afsluitende balk met het aantal woningen en de link naar de website. */
+.makelaarkaart {
+  display: flex; flex-direction: column; min-width: 0; overflow: hidden;
+  background: var(--weune-wit); border-radius: var(--weune-radius-l); box-shadow: var(--weune-schaduw-kaart);
+}
+.makelaarkaart__logo {
+  height: 112px; padding: var(--weune-ruimte-4) var(--weune-ruimte-5);
+  display: flex; align-items: center; border-bottom: 1px solid var(--weune-lijn);
+}
+.makelaarkaart__logo img { max-height: 100%; max-width: 100%; width: auto; object-fit: contain; object-position: left center; }
+.makelaarkaart__inhoud { flex: 1; padding: var(--weune-ruimte-4) var(--weune-ruimte-5) var(--weune-ruimte-5); }
+.makelaarkaart h2 { font-size: var(--weune-fs-h4); margin: 0; }
+.kantoor__tel { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.makelaarkaart__voet {
+  display: grid; gap: 4px; padding: var(--weune-ruimte-4) var(--weune-ruimte-5);
+  background: var(--weune-nacht); color: var(--weune-tekst-op-donker); font-size: var(--weune-fs-klein);
+}
+.makelaarkaart__voet strong { color: var(--weune-wit); font-family: var(--weune-font-kop); font-size: 1rem; }
+.makelaarkaart__voet a {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 32px; justify-self: start;
+  color: var(--weune-wit); font-weight: 600; text-decoration: none;
+}
+.makelaarkaart__voet a:hover { color: var(--weune-golf); text-decoration: underline; }
+.makelaarkaart__voet a .icoon { width: 16px; height: 16px; }
 .pagina__intro { margin-top: var(--weune-ruimte-3); color: var(--weune-tekst-2); max-width: 65ch; }
 .pagina h1 { font-size: var(--weune-fs-h1); }
 

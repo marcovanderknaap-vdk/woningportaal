@@ -2,25 +2,33 @@
 {% block titel %}Aangesloten makelaars – {{ PORTAAL_NAAM }}{% endblock %}
 {% block og_titel %}Aangesloten makelaars{% endblock %}
 {% block inhoud %}
+{% include "aanbod/includes/iconen.html" %}
 <div class="pagina">
   <div class="binnen">
     <h1>Aangesloten makelaars</h1>
     <p class="pagina__intro">Op Weune staat alleen aanbod van NVM-makelaars in Zeeland. Elke makelaar hieronder is aangesloten en levert zijn aanbod dagelijks aan.</p>
     <div class="makelaars">
       {% for m in makelaars %}
-      <article class="paneel">
-        {% if m.logo_url %}<img class="makelaar-logo" src="{{ m.logo_url }}" alt="Logo {{ m.naam }}">{% endif %}
-        <h2>{{ m.naam }}</h2>
-        <ul class="kantoren">
-          {% for v in m.vestigingen.all %}
-          <li class="kantoor">
-            <address>{{ v.straat }}<br>{{ v.postcode }} {{ v.plaats }}</address>
-            {% if v.telefoon %}<a href="{{ v.telefoon_link }}" aria-label="Bel {{ m.naam }} {{ v.plaats }}: {{ v.telefoon }}">{{ v.telefoon }}</a>{% endif %}
-          </li>
-          {% endfor %}
-        </ul>
-        <p>{{ m.aantal }} woning{{ m.aantal|pluralize:"en" }} op Weune</p>
-        {% if m.website %}<p><a href="{{ m.website }}" target="_blank" rel="noopener">Naar de website van {{ m.naam }}</a></p>{% endif %}
+      <article class="makelaarkaart">
+        <div class="makelaarkaart__logo">
+          {% if m.logo_url %}<img src="{{ m.logo_url }}" alt="Logo {{ m.naam }}">{% endif %}
+        </div>
+        <div class="makelaarkaart__inhoud">
+          <h2>{{ m.naam }}</h2>
+          <ul class="kantoren">
+            {% for v in m.vestigingen.all %}
+            <li class="kantoor">
+              {% if m.vestigingen.count > 1 %}<p class="kantoor__naam">{{ v.naam|default:v.plaats }}</p>{% endif %}
+              <address>{{ v.straat }}<br>{{ v.postcode }} {{ v.plaats }}</address>
+              {% if v.telefoon %}<a class="kantoor__tel" href="{{ v.telefoon_link }}" aria-label="Bel {{ m.naam }} {{ v.plaats }}: {{ v.telefoon }}"><svg class="icoon" aria-hidden="true"><use href="#i-telefoon"/></svg>{{ v.telefoon }}</a>{% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <footer class="makelaarkaart__voet">
+          <p><strong>{{ m.aantal }}</strong> woning{{ m.aantal|pluralize:"en" }} op Weune</p>
+          {% if m.website %}<a href="{{ m.website }}" target="_blank" rel="noopener">Website van {{ m.naam }}<svg class="icoon" aria-hidden="true"><use href="#i-extern"/></svg></a>{% endif %}
+        </footer>
       </article>
       {% endfor %}
     </div>
