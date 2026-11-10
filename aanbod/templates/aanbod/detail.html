@@ -36,17 +36,27 @@
           <p class="makelaarblok__label">Verkopend makelaar</p>
           {% if logo %}<img class="makelaar-logo" src="{{ logo }}" alt="Logo {{ woning.makelaar.naam }}">{% endif %}
           <p class="makelaarblok__naam">{{ woning.makelaar.naam }}</p>
-          {% if vestigingen %}
-          <ul class="kantoren">
-            {% for v in vestigingen %}
-            <li class="kantoor">
-              {% if vestigingen|length > 1 %}<p class="kantoor__naam">{{ v.naam|default:v.plaats }}</p>{% endif %}
-              <address>{{ v.straat }}<br>{{ v.postcode }} {{ v.plaats }}</address>
-              {% if v.telefoon %}<a class="weune-knop weune-knop--secundair kantoor__bel" href="{{ v.telefoon_link }}" aria-label="Bel {{ woning.makelaar.naam }} {{ v.plaats }}: {{ v.telefoon }}"><svg class="icoon" aria-hidden="true"><use href="#i-telefoon"/></svg>{{ v.telefoon }}</a>{% endif %}
-              {% if v.email %}<a class="kantoor__mail" href="mailto:{{ v.email }}">{{ v.email }}</a>{% endif %}
-            </li>
-            {% endfor %}
-          </ul>
+          {% if kantoor %}
+          <div class="kantoor kantoor--hoofd">
+            <p class="kantoor__naam">{% if woning.vestiging_bron == "pagina" %}Aangeboden door kantoor {{ kantoor.naam|default:kantoor.plaats }}{% elif andere_kantoren %}Dichtstbijzijnde kantoor: {{ kantoor.naam|default:kantoor.plaats }}{% endif %}</p>
+            <address>{{ kantoor.straat }}<br>{{ kantoor.postcode }} {{ kantoor.plaats }}</address>
+            {% if kantoor.telefoon %}<a class="weune-knop weune-knop--secundair kantoor__bel" href="{{ kantoor.telefoon_link }}" aria-label="Bel {{ woning.makelaar.naam }} {{ kantoor.plaats }}: {{ kantoor.telefoon }}"><svg class="icoon" aria-hidden="true"><use href="#i-telefoon"/></svg>{{ kantoor.telefoon }}</a>{% endif %}
+            {% if kantoor.email %}<a class="kantoor__mail" href="mailto:{{ kantoor.email }}">{{ kantoor.email }}</a>{% endif %}
+          </div>
+          {% if andere_kantoren %}
+          <details class="andere-kantoren">
+            <summary>Andere vestigingen van {{ woning.makelaar.naam }} ({{ andere_kantoren|length }})</summary>
+            <ul class="kantoren">
+              {% for v in andere_kantoren %}
+              <li class="kantoor">
+                <p class="kantoor__naam">{{ v.naam|default:v.plaats }}</p>
+                <address>{{ v.straat }}<br>{{ v.postcode }} {{ v.plaats }}</address>
+                {% if v.telefoon %}<a class="kantoor__tel" href="{{ v.telefoon_link }}" aria-label="Bel {{ woning.makelaar.naam }} {{ v.plaats }}: {{ v.telefoon }}"><svg class="icoon" aria-hidden="true"><use href="#i-telefoon"/></svg>{{ v.telefoon }}</a>{% endif %}
+              </li>
+              {% endfor %}
+            </ul>
+          </details>
+          {% endif %}
           {% endif %}
         </div>
       </div>

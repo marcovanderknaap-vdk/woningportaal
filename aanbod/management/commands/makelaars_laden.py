@@ -40,6 +40,7 @@ class Command(BaseCommand):
                 self._vestigingen(m, item["vestigingen"])
             if item.get("logo_bestand"):
                 self._logo(m, Path(settings.BASE_DIR) / item["logo_bestand"])
+        self._geocodeer_vestigingen()
 
     def _vestigingen(self, m, lijst):
         gewenst = [{k: v.get(k, "") for k in VESTIGING_VELDEN} for v in lijst]
@@ -50,6 +51,21 @@ class Command(BaseCommand):
         for i, v in enumerate(gewenst):
             Vestiging.objects.create(makelaar=m, volgorde=i, **v)
         self.stdout.write(f"~ {m.naam}: {len(gewenst)} vestiging(en)")
+
+    def _geocodeer_vestigingen(self):
+        from aanbod.scraper.geocode import zoek
+
+        for v in Vestiging.objects.filter(lat__isnull=True):
+            try:
+                res = zoek(v.straat, v.postcode, v.plaats)
+            except Exception as exc:  # noqa: BLE001 – PDOK even niet bereikbaar: volgende keer opnieuw
+                self.stdout.write(f"  locatie van {v} niet opgezocht: {exc}")
+                continue
+            if res:
+                v.lat, v.lon, _ = res
+                v.save(update_fields=["lat", "lon"])
+            else:
+                self.stdout.write(f"  locatie van {v} niet gevonden")
 
     def _logo(self, m, pad):
         """Vast logo uit de repository; gaat vóór het automatisch opgehaalde logo."""

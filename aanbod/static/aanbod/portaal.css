@@ -197,6 +197,18 @@ select.gekozen { background-color: var(--weune-golf-licht); border-color: var(--
 .makelaarkaart__logo img { max-height: 100%; max-width: 100%; width: auto; object-fit: contain; object-position: left center; }
 .makelaarkaart__inhoud { flex: 1; padding: var(--weune-ruimte-4) var(--weune-ruimte-5) var(--weune-ruimte-5); }
 .makelaarkaart h2 { font-size: var(--weune-fs-h4); margin: 0; }
+.andere-kantoren { margin-top: var(--weune-ruimte-3); border-top: 1px solid var(--weune-lijn); padding-top: var(--weune-ruimte-3); }
+.andere-kantoren summary {
+  cursor: pointer; min-height: 44px; display: flex; align-items: center; gap: 8px;
+  font-weight: 600; color: var(--weune-link); list-style: none;
+}
+.andere-kantoren summary::-webkit-details-marker { display: none; }
+.andere-kantoren summary::before {
+  content: ""; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg); transition: transform .15s; margin-right: 2px;
+}
+.andere-kantoren[open] summary::before { transform: rotate(45deg); }
+.andere-kantoren .kantoren { margin-top: var(--weune-ruimte-2); }
 .kantoor__tel { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; font-weight: 500; font-variant-numeric: tabular-nums; }
 .makelaarkaart__voet {
   display: grid; gap: 4px; padding: var(--weune-ruimte-4) var(--weune-ruimte-5);

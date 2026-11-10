@@ -18,6 +18,7 @@ from .discovery import vind_woninglinks
 from .http import Fetcher, NietToegestaan
 from .geocode import geocodeer, te_geocoderen
 from .logo import haal_logo
+from .vestiging import koppel as koppel_vestiging
 
 log = logging.getLogger("aanbod.scraper")
 
@@ -198,6 +199,7 @@ class Controle:
                     bestaand.status_gewijzigd = timezone.now()
                     run.status_wijzigingen += 1
                 bestaand.save()
+                koppel_vestiging(bestaand, res.paginacijfers)
                 if bestaand.status != oude_status or bestaand.vraagprijs != oude_prijs:
                     WoningStatusHistorie.objects.create(
                         woning=bestaand, oude_status=oude_status, nieuwe_status=bestaand.status,
@@ -217,6 +219,7 @@ class Controle:
         self._foto(woning, res.foto_url)
         if not geocodeer(woning):
             self._log(f"Locatie niet gevonden voor {woning} (niet op de kaart)")
+        koppel_vestiging(woning, res.paginacijfers)
         WoningStatusHistorie.objects.create(woning=woning, nieuwe_status=woning.status, nieuwe_prijs=woning.vraagprijs)
 
     def _controleer_bestaand(self, woning, in_overzicht, run):
@@ -270,6 +273,7 @@ class Controle:
             )
         run.bijgewerkt += 1
         woning.save()
+        koppel_vestiging(woning, res.paginacijfers)
         if res.foto_url and (not woning.foto or res.foto_url != oude_foto):
             # Nieuwe of betere hoofdfoto: opnieuw ophalen
             if woning.foto:

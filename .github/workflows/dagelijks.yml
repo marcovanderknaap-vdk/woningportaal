@@ -89,6 +89,11 @@ jobs:
         # Ook in de stand 'alleen de site': woningen zonder coördinaten opzoeken bij PDOK
         run: python manage.py geocoderen || echo "PDOK niet bereikbaar; volgende run opnieuw"
 
+      - name: Kantoren koppelen
+        # Woningen zonder bekend kantoor krijgen alvast het dichtstbijzijnde; de dagelijkse
+        # controle leest daarna het echte kantoor van de woningpagina.
+        run: python manage.py vestigingen_bepalen --zonder-ophalen
+
       - name: Database en foto's bewaren
         if: always()
         run: |

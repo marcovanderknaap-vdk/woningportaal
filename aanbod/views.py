@@ -100,6 +100,12 @@ def detail(request, pk):
         ("Bouwjaar", str(woning.bouwjaar) if woning.bouwjaar else ""),
         ("Energielabel", woning.energielabel),
     ]
+    alle_kantoren = list(woning.makelaar.vestigingen.all())
+    kantoor = woning.vestiging if woning.vestiging in alle_kantoren else None
+    if kantoor is None and alle_kantoren:
+        # Nog niet bepaald: zelfde plaats of het eerste kantoor, als dichtstbijzijnde
+        from .scraper.vestiging import dichtstbij
+        kantoor = dichtstbij(alle_kantoren, woning) or alle_kantoren[0]
     return render(
         request,
         "aanbod/detail.html",
@@ -108,11 +114,9 @@ def detail(request, pk):
             "hoofd": [(k, v) for k, v in hoofd if v],
             "foto": _media_url(request, woning.foto) or woning.foto_bron_url,
             "logo": _media_url(request, woning.makelaar.logo),
-            # Kantoor in de woonplaats van de woning bovenaan
-            "vestigingen": sorted(
-                woning.makelaar.vestigingen.all(),
-                key=lambda v: (v.plaats.lower() != (woning.woonplaats or "").lower(), v.volgorde),
-            ),
+            # Het aanbiedende kantoor; de overige vestigingen ingeklapt eronder
+            "kantoor": kantoor,
+            "andere_kantoren": [v for v in alle_kantoren if v != kantoor],
         },
     )
 

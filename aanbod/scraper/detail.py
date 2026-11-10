@@ -80,6 +80,8 @@ class Resultaat:
     kenmerken: dict = field(default_factory=dict)
     is_huur: bool = False
     geen_woning: bool = False
+    # Alle cijfers uit de zichtbare tekst van de pagina (om het aanbiedende kantoor te herkennen)
+    paginacijfers: str = ""
 
     @property
     def bruikbaar(self):
@@ -391,6 +393,8 @@ def parse_detail(html, url):
     # Navigatie, kop- en voettekst weg voor het zoeken naar kenmerken
     for tag in soup(["script", "style", "noscript", "nav", "header", "footer", "form", "svg"]):
         tag.decompose()
+    # Cijfers uit de inhoud (zonder kop/menu/voettekst, waar vaak het hoofdkantoor staat)
+    res.paginacijfers = re.sub(r"\D", "", soup.get_text(" "))
 
     if not res.foto_url:
         res.foto_url = reserve_foto

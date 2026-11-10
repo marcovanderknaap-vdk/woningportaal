@@ -86,6 +86,8 @@ class Vestiging(models.Model):
     telefoon = models.CharField(max_length=30, blank=True)
     email = models.EmailField("e-mail", blank=True)
     volgorde = models.PositiveSmallIntegerField(default=0)
+    lat = models.FloatField(null=True, blank=True, editable=False)
+    lon = models.FloatField(null=True, blank=True, editable=False)
 
     class Meta:
         verbose_name = "vestiging"
@@ -166,6 +168,16 @@ class Woning(models.Model):
     geo_gecontroleerd = models.DateTimeField(
         "locatie opgezocht", null=True, blank=True,
         help_text="Wanneer de coördinaten voor het laatst bij PDOK zijn opgezocht.",
+    )
+
+    vestiging = models.ForeignKey(
+        "Vestiging", null=True, blank=True, on_delete=models.SET_NULL, related_name="woningen",
+        help_text="Het kantoor dat de woning aanbiedt.",
+    )
+    vestiging_bron = models.CharField(
+        "hoe het kantoor is bepaald", max_length=20, blank=True,
+        choices=[("pagina", "Vermeld op de pagina van de makelaar"), ("afstand", "Dichtstbijzijnde kantoor"),
+                 ("enige", "Enige kantoor")],
     )
 
     foto = models.ImageField("hoofdfoto", upload_to="woningen/%Y/%m/", blank=True)

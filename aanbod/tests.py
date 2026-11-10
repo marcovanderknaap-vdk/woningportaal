@@ -129,6 +129,29 @@ class GeocodeTest(TestCase):
         self.assertIsNone(geocode.zoek("Spanjaardstraat 15", "", "Middelburg", sessie))
 
 
+class VestigingTest(TestCase):
+    def setUp(self):
+        from .models import Vestiging
+        self.m = Makelaar.objects.create(naam="K", aanbod_url="https://k.nl/")
+        self.goes = Vestiging.objects.create(makelaar=self.m, naam="Goes", straat="a 1", postcode="4462 MV", plaats="Goes",
+                                             telefoon="0113-227788", lat=51.50, lon=3.89)
+        self.axel = Vestiging.objects.create(makelaar=self.m, naam="Axel", straat="b 2", postcode="4571 GD", plaats="Axel",
+                                             telefoon="0115-553010", lat=51.27, lon=3.91)
+
+    def test_kantoor_van_pagina(self):
+        from .scraper.vestiging import bepaal
+        w = Woning(makelaar=self.m, url="https://k.nl/1", woonplaats="Kats", lat=51.57, lon=3.88)
+        # Beide nummers in een contactlijst, het Axelse één keer extra bij de woning
+        cijfers = "0113227788" + "0115553010" + "0115553010"
+        self.assertEqual(bepaal(w, cijfers), (self.axel, "pagina"))
+
+    def test_geen_duidelijke_winnaar_dan_dichtstbij(self):
+        from .scraper.vestiging import bepaal
+        w = Woning(makelaar=self.m, url="https://k.nl/2", woonplaats="Kats", lat=51.57, lon=3.88)
+        self.assertEqual(bepaal(w, "0113227788" + "0115553010"), (self.goes, "afstand"))
+        self.assertEqual(bepaal(w, ""), (self.goes, "afstand"))
+
+
 class CategorieTest(TestCase):
     def test_categorie(self):
         from .views import categorie
