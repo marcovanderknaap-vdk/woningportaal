@@ -274,7 +274,8 @@ class Controle:
         run.bijgewerkt += 1
         woning.save()
         koppel_vestiging(woning, res.paginacijfers)
-        if res.foto_url and (not woning.foto or res.foto_url != oude_foto):
+        foto_ontbreekt = not woning.foto or not woning.foto.storage.exists(woning.foto.name)
+        if res.foto_url and (foto_ontbreekt or res.foto_url != oude_foto):
             # Nieuwe of betere hoofdfoto: opnieuw ophalen
             if woning.foto:
                 woning.foto.delete(save=False)

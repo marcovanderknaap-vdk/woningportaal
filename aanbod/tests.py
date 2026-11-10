@@ -1,6 +1,7 @@
+import tempfile
 from datetime import timedelta
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
 
 from .models import Makelaar, Woning
@@ -181,6 +182,42 @@ class PaginaTest(TestCase):
             self.assertEqual(r.status_code, 200, url)
             self.assertContains(r, f'aria-current="page"><span class="menu__lang">{actief}' if actief != "Makelaars"
                                 else 'aria-current="page">Makelaars')
+
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp(prefix="weune-test-media-"))
+class OpruimenTest(TestCase):
+    def test_termijnen(self):
+        from io import StringIO
+
+        from django.core.management import call_command
+
+        m = Makelaar.objects.create(naam="T", aanbod_url="https://t.nl/")
+        nu = timezone.now()
+        actief = Woning.objects.create(makelaar=m, url="https://t.nl/1")
+        recent = Woning.objects.create(makelaar=m, url="https://t.nl/2", status="verkocht", status_gewijzigd=nu - timedelta(days=40))
+        oud = Woning.objects.create(makelaar=m, url="https://t.nl/3", online=False, laatst_gezien=nu - timedelta(days=100))
+        heel_oud = Woning.objects.create(makelaar=m, url="https://t.nl/4", status="verkocht", status_gewijzigd=nu - timedelta(days=800))
+        call_command("opruimen", stdout=StringIO())
+        self.assertTrue(Woning.objects.filter(pk__in=[actief.pk, recent.pk, oud.pk]).count() == 3)
+        self.assertFalse(Woning.objects.filter(pk=heel_oud.pk).exists())
+
+    def test_veiligheidsrem_bij_lege_database(self):
+        import os
+        from io import StringIO
+        from pathlib import Path
+
+        from django.conf import settings
+        from django.core.management import call_command
+
+        map_ = Path(settings.MEDIA_ROOT) / "woningen" / "2026" / "11"
+        map_.mkdir(parents=True, exist_ok=True)
+        oud = timezone.now().timestamp() - 3 * 86400
+        for i in range(30):
+            f = map_ / f"woning-{i}.jpg"
+            f.write_bytes(b"x")
+            os.utime(f, (oud, oud))
+        call_command("opruimen", stdout=StringIO(), stderr=StringIO())
+        self.assertEqual(len(list(map_.iterdir())), 30)
 
 
 class NieuwLabelTest(TestCase):

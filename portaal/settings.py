@@ -4,6 +4,7 @@ Gevoelige of omgevingsafhankelijke waarden komen uit omgevingsvariabelen,
 zodat dezelfde code lokaal, in GitHub Actions en later op een server draait.
 """
 import os
+import sys
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -96,6 +97,11 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "media/"
 MEDIA_ROOT = Path(env("PORTAAL_MEDIA_ROOT", BASE_DIR / "data" / "media"))
+if len(sys.argv) > 1 and sys.argv[1] == "test":
+    # Tests nooit in de echte fotomap laten schrijven of opruimen
+    import tempfile
+
+    MEDIA_ROOT = Path(tempfile.mkdtemp(prefix="weune-test-media-"))
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -116,6 +122,13 @@ PORTAAL_INDEXEREN = env_bool("PORTAAL_INDEXEREN", False)
 NIEUW_DAGEN = int(env("NIEUW_DAGEN", "14"))
 # Hoe lang verkochte woningen nog zichtbaar blijven op de site.
 VERKOCHT_ZICHTBAAR_DAGEN = int(env("VERKOCHT_ZICHTBAAR_DAGEN", "30"))
+# Opruimen van woningen die verkocht zijn of niet meer bij de makelaar staan:
+# na FOTO_BEWAREN_DAGEN wordt de foto verwijderd (de woning blijft als archiefregel bewaard),
+# na ARCHIEF_BEWAREN_DAGEN wordt ook de archiefregel verwijderd.
+FOTO_BEWAREN_DAGEN = int(env("FOTO_BEWAREN_DAGEN", "90"))
+ARCHIEF_BEWAREN_DAGEN = int(env("ARCHIEF_BEWAREN_DAGEN", "730"))
+LOGBOEK_BEWAREN_DAGEN = int(env("LOGBOEK_BEWAREN_DAGEN", "90"))
+GENEGEERD_BEWAREN_DAGEN = int(env("GENEGEERD_BEWAREN_DAGEN", "365"))
 # Hoe lang verkochte woningen nog gecontroleerd worden (daarna niet meer opgehaald).
 VERKOCHT_CONTROLE_DAGEN = int(env("VERKOCHT_CONTROLE_DAGEN", "30"))
 # User-Agent waarmee de makelaarssites bezocht worden.

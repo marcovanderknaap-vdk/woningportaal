@@ -56,6 +56,20 @@ hele bestaande aanbod als “nieuw” verschijnen.
    onder *Controles (logboek)* hoeveel woninglinks er gevonden zijn en hoe de eerste 3 woningen gelezen werden.
 3. Klopt het? Dan neemt de dagelijkse controle de makelaar mee.
 
+## Opruimen (opslag beperken)
+Dagelijks (`python manage.py opruimen`, ook in de workflow):
+
+| Termijn | Wat gebeurt er | Instelling |
+|---|---|---|
+| 30 dagen na verkoop / verdwijnen | niet meer zichtbaar op de site | `VERKOCHT_ZICHTBAAR_DAGEN` |
+| 90 dagen | foto verwijderd; woning blijft als archiefregel (adres, prijzen, historie) | `FOTO_BEWAREN_DAGEN` |
+| 2 jaar | archiefregel verwijderd | `ARCHIEF_BEWAREN_DAGEN` |
+| 90 dagen | logboeken van controles verwijderd | `LOGBOEK_BEWAREN_DAGEN` |
+| 1 jaar | genegeerde links verwijderd | `GENEGEERD_BEWAREN_DAGEN` |
+
+Losse fotobestanden zonder woning worden ook opgeruimd, met een veiligheidsrem: nooit als het om meer dan
+10% van alle bestanden gaat. De branch `data` op GitHub bewaart alleen de laatste stand (geen geschiedenis).
+
 ## Lokaal draaien
 
 ```bash

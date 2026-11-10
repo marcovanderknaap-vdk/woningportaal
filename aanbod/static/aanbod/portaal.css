@@ -343,3 +343,6 @@ select.gekozen { background-color: var(--weune-golf-licht); border-color: var(--
 .over-stappen strong { color: var(--weune-nacht); }
 .over-payoff { margin-top: var(--weune-ruimte-5) !important; font-family: var(--weune-font-kop); font-weight: 600; font-size: var(--weune-fs-h3); color: var(--weune-blauw); }
 .over-acties { display: flex; flex-wrap: wrap; gap: var(--weune-ruimte-3); margin-top: var(--weune-ruimte-6); }
+.over-naam { background: var(--weune-wit); border-radius: var(--weune-radius-l); box-shadow: var(--weune-schaduw-kaart); padding: var(--weune-ruimte-5); }
+.over-naam__woord { font-family: var(--weune-font-kop); font-weight: 600; font-size: var(--weune-fs-h2); color: var(--weune-blauw); margin-bottom: var(--weune-ruimte-3); }
+.over-naam__uitleg { font-family: var(--weune-font-tekst); font-weight: 400; font-size: 1rem; color: var(--weune-tekst-2); font-style: italic; }

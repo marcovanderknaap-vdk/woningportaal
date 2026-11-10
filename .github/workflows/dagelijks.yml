@@ -94,15 +94,21 @@ jobs:
         # controle leest daarna het echte kantoor van de woningpagina.
         run: python manage.py vestigingen_bepalen --zonder-ophalen
 
+      - name: Opruimen
+        # Foto's van woningen die >90 dagen verkocht/verdwenen zijn, archiefregels >2 jaar, oude logboeken
+        run: python manage.py opruimen
+
       - name: Database en foto's bewaren
         if: always()
+        # Zonder geschiedenis: alleen de laatste stand, zodat de repository niet blijft groeien
         run: |
           cd databranch
           git config user.name "woningportaal-bot"
           git config user.email "actions@users.noreply.github.com"
+          git checkout -q --orphan data-nieuw
           git add -A
-          git commit -qm "Aanbod bijgewerkt $(date +%F)" || echo "Geen wijzigingen"
-          git push origin HEAD:data
+          git commit -qm "Aanbod bijgewerkt $(date '+%F %H:%M')"
+          git push --force origin HEAD:data
 
       - name: Statische site maken
         run: python manage.py export_statisch --uit site --basis "/${{ github.event.repository.name }}/"
