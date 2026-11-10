@@ -44,6 +44,13 @@ class Command(BaseCommand):
                 doel.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(w.foto.path, doel)
 
+        from aanbod.models import Makelaar
+        for m in Makelaar.objects.exclude(logo=""):
+            if Path(m.logo.path).exists():
+                doel = uit / settings.MEDIA_URL.strip("/") / m.logo.name
+                doel.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(m.logo.path, doel)
+
         statisch = Path(settings.BASE_DIR) / "aanbod" / "static"
         shutil.copytree(statisch, uit / "static")
         (uit / ".nojekyll").write_text("")

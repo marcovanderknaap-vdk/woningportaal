@@ -68,6 +68,29 @@ class DetailTest(TestCase):
         self.assertEqual(r.foto_url, "https://makelaar.nl/foto.jpg")
 
 
+class OmschrijvingEnKenmerkenTest(TestCase):
+    HTML = """<html><head><title>Statenlaan 8 (Middelburg) | Kuub Makelaars</title>
+    <meta property="og:description" content="Kuub Makelaars is dé makelaar in Zeeland met vestigingen in Axel, Goes en Middelburg.">
+    </head><body><ul><li>Wonen</li><li>Aanbod</li></ul>
+    <h2>Omschrijving</h2><p>Kenmerken</p>
+    <p>Ruim en licht appartement met drie slaapkamers, moderne keuken en badkamer, twee balkons en een groene omgeving.</p>
+    <p>De Statenlaan is gelegen in een rustige woonwijk op loopafstand van het centrum van Middelburg.</p>
+    <div><span>110 m²</span><span>Kamers</span><span>Benieuwd of je de woning kan betalen?</span></div>
+    <dl><dt>Vraagprijs</dt><dd>€ 275.000,- k.k.</dd><dt>Aantal kamers</dt><dd>4</dd><dt>Soort woonhuis</dt><dd>Eengezinswoning</dd></dl>
+    </body></html>"""
+
+    def test_omschrijving_van_pagina_niet_van_kantoor(self):
+        r = parse_detail(self.HTML, "https://www.kuubmakelaars.nl/woning/statenlaan-8-middelburg/")
+        self.assertTrue(r.omschrijving.startswith("Ruim en licht appartement"))
+        self.assertEqual(r.woningtype, "appartement")
+
+    def test_losse_woorden_geen_kenmerk(self):
+        r = parse_detail(self.HTML, "https://www.kuubmakelaars.nl/woning/statenlaan-8-middelburg/")
+        self.assertNotIn("Kamers", r.kenmerken)
+        self.assertNotIn("Wonen", r.kenmerken)
+        self.assertEqual(r.kamers, 4)
+
+
 class LinksTest(TestCase):
     def test_automatisch(self):
         links = [
@@ -76,6 +99,15 @@ class LinksTest(TestCase):
             "https://m.nl/nieuws/top-10-tips-2024/", "https://m.nl/contact/", "https://m.nl/?p=12",
         ]
         self.assertEqual(len(kies_woninglinks(links)), 3)
+
+
+class CategorieTest(TestCase):
+    def test_categorie(self):
+        from .views import categorie
+        self.assertEqual(categorie("appartement"), "appartement")
+        self.assertEqual(categorie("tussenwoning"), "woning")
+        self.assertEqual(categorie("overig"), "woning")
+        self.assertEqual(categorie("bouwgrond"), "bouwgrond")
 
 
 class NieuwLabelTest(TestCase):

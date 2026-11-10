@@ -16,6 +16,7 @@ from ..models import GenegeerdeUrl, Makelaar, OphaalRun, Woning, WoningStatusHis
 from .detail import parse_detail
 from .discovery import vind_woninglinks
 from .http import Fetcher, NietToegestaan
+from .logo import haal_logo
 
 log = logging.getLogger("aanbod.scraper")
 
@@ -73,6 +74,14 @@ class Controle:
     def _uitvoeren(self, run):
         # Zolang er nog nooit een geslaagde controle was, is alles bestaand aanbod (geen label "nieuw")
         eerste_import = self.m.laatste_succes is None
+        if not self.m.logo and not self.droog:
+            try:
+                if haal_logo(self.fetcher, self.m):
+                    self._log(f"Logo opgehaald: {self.m.logo_bron_url}")
+                else:
+                    self._log("Geen logo gevonden op de website; upload er zelf een in de backend.")
+            except Exception as exc:  # noqa: BLE001 – logo is niet kritisch
+                self._log(f"Logo kon niet worden opgehaald: {exc}")
         links = vind_woninglinks(self.fetcher, self.m, self.regels)
         run.links_gevonden = len(links)
         if not links:
@@ -146,6 +155,30 @@ class Controle:
         if not res.bruikbaar:
             run.fouten += 1
             self._log(f"FOUT: kon geen adres/prijs/status lezen op {url}")
+            return
+
+        # Dezelfde woning onder een nieuwe link (opnieuw in verkoop gezet)? Dan de bestaande bijwerken.
+        bestaand = (
+            self.m.woningen.filter(adres__iexact=res.adres, woonplaats__iexact=res.woonplaats).order_by("eerst_gezien").first()
+            if res.adres and res.woonplaats else None
+        )
+        if bestaand:
+            self._log(f"NIEUWE LINK voor bestaande woning {bestaand}: {url}")
+            if not self.droog:
+                oude_status, oude_prijs = bestaand.status, bestaand.vraagprijs
+                bestaand.url = url
+                bestaand.online = True
+                bestaand.laatst_gezien = bestaand.laatst_gecontroleerd = timezone.now()
+                self._vul(bestaand, res, bestaand=True)
+                if bestaand.status != oude_status:
+                    bestaand.status_gewijzigd = timezone.now()
+                    run.status_wijzigingen += 1
+                bestaand.save()
+                if bestaand.status != oude_status or bestaand.vraagprijs != oude_prijs:
+                    WoningStatusHistorie.objects.create(
+                        woning=bestaand, oude_status=oude_status, nieuwe_status=bestaand.status,
+                        oude_prijs=oude_prijs, nieuwe_prijs=bestaand.vraagprijs,
+                    )
             return
 
         self._log(f"NIEUW: {res.adres}, {res.woonplaats} – {res.prijs_tekst or 'prijs onbekend'} ({res.status})")

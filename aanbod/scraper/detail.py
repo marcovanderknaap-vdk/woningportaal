@@ -181,6 +181,15 @@ def _tekstlijst(soup):
     return samengevoegd
 
 
+# Waarden die bij een bekend label horen moeten aan deze vorm voldoen; anders is het
+# een los woord uit een menu of widget ('Kamers' → 'Benieuwd of je de woning kan betalen?').
+WAARDE_CONTROLE = {
+    "woonoppervlakte": r"\d\s*m", "perceel": r"\d\s*m", "inhoud": r"\d\s*m",
+    "kamers": r"^\s*\d", "slaapkamers": r"^\s*\d", "bouwjaar": r"\d{4}",
+    "prijs": r"\d|op aanvraag", "energielabel": r"\b[A-G]\b|niet|geen|onbekend",
+}
+
+
 def _label_paren(soup):
     """Zoek label/waarde-paren: eerst in <dl> en tabellen, daarna in de tekststroom."""
     paren = {}
@@ -194,6 +203,9 @@ def _label_paren(soup):
             return
         sleutel = label.lower()
         if waarde.lower() == sleutel:
+            return
+        doel = LABELS.get(sleutel)
+        if doel in WAARDE_CONTROLE and not re.search(WAARDE_CONTROLE[doel], waarde, re.I):
             return
         paren.setdefault(sleutel, (label, waarde))
 
@@ -308,6 +320,27 @@ def _eerste_foto(soup):
     return ""
 
 
+OMSCHRIJVING_KOP = {"omschrijving", "beschrijving", "over deze woning", "over de woning", "toon volledige omschrijving"}
+
+
+def _omschrijving_uit_pagina(soup):
+    fragmenten = _tekstlijst(soup)
+    for i, f in enumerate(fragmenten):
+        if f.lower().strip(" :") not in OMSCHRIJVING_KOP:
+            continue
+        tekst = []
+        for volgende in fragmenten[i + 1 : i + 8]:
+            if len(volgende) >= 60:
+                tekst.append(volgende)
+            elif tekst:
+                break
+            if sum(map(len, tekst)) > 600:
+                break
+        if sum(map(len, tekst)) >= 100:
+            return " ".join(tekst)
+    return ""
+
+
 def _status_uit_badges(soup):
     for el in soup.find_all(class_=re.compile(r"status|label|badge|sticker|banner|ribbon|flag|tag", re.I)):
         tekst = _schoon(el.get_text(" "))
@@ -367,11 +400,7 @@ def parse_detail(html, url):
     paren = _label_paren(soup)
     res.kenmerken = {label: waarde for (label, waarde) in paren.values()}
 
-    controles = {
-        "woonoppervlakte": r"\d\s*m", "perceel": r"\d\s*m", "inhoud": r"\d\s*m",
-        "kamers": r"^\s*\d", "slaapkamers": r"^\s*\d", "bouwjaar": r"\d{4}",
-        "prijs": r"\d|op aanvraag", "energielabel": r"\b[A-G]\b",
-    }
+    controles = WAARDE_CONTROLE
 
     def veld(naam):
         # Labels in volgorde van LABELS (specifiek vóór algemeen), waarde moet kloppen
@@ -430,15 +459,21 @@ def parse_detail(html, url):
     m = re.search(r"\b([A-G](\+{1,5})?)\b", label or "")
     res.energielabel = m.group(1) if m else ""
 
+    # Omschrijving: liefst de tekst onder het kopje 'Omschrijving' op de pagina;
+    # de og:description is bij sommige sites een algemene tekst over het kantoor.
+    pagina_omschrijving = _omschrijving_uit_pagina(soup)
+    res.omschrijving = (pagina_omschrijving or og_beschrijving)[:600]
+
     soort, soort_obj, type_ = veld("soort"), veld("soort_object"), veld("type")
     res.woningtype = normaliseer_type(soort, type_, soort_obj)
     if res.woningtype == "overig":
         res.woningtype = normaliseer_type(titel)
+    if res.woningtype == "overig" and pagina_omschrijving:
+        # Bijv. Kuub noemt alleen 'Eengezinswoning'; de omschrijving zegt 'Deze fijne hoekwoning …'
+        res.woningtype = type_uit_tekst(pagina_omschrijving)
     if res.woningtype == "overig":
-        # Laatste redmiddel: welk woningtype wordt het vaakst genoemd in de omschrijving?
+        # Laatste redmiddel: welk woningtype wordt het vaakst genoemd op de hele pagina?
         res.woningtype = type_uit_tekst(" ".join(f for f in _tekstlijst(soup) if len(f) > 80))
     if GEEN_WONING.search(f"{soort} {soort_obj} {type_}") and res.woningtype in ("overig",):
         res.geen_woning = True
-
-    res.omschrijving = og_beschrijving[:500]
     return res

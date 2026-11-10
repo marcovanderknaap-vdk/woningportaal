@@ -77,13 +77,29 @@ select:focus, input:focus, button:focus, a:focus-visible { outline: 2px solid va
 .kaart__foto { position: relative; aspect-ratio: 3 / 2; background: var(--blauw-zacht); }
 .kaart__foto img { width: 100%; height: 100%; object-fit: cover; }
 .kaart--verkocht .kaart__foto img { filter: grayscale(.6); opacity: .8; }
-.kaart__tekst { padding: 14px 16px 16px; }
+.kaart__link { display: flex !important; flex-direction: column; }
+.kaart__tekst { padding: 14px 16px 12px; flex: 1; }
+.soort { margin: 0; font-size: .82rem; color: var(--grijs); }
+.kaart__makelaar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-top: 1px solid var(--lijn); font-size: .85rem; color: var(--grijs); min-height: 52px; }
+.kaart__makelaar img { height: 28px; width: auto; max-width: 110px; object-fit: contain; flex: none; }
+.kaart__makelaar span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.weergave { display: flex; gap: 16px; flex-wrap: wrap; }
+.paginering { display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 28px; }
+.paginering button {
+  font: inherit; font-weight: 600; min-width: 40px; height: 40px; padding: 0 12px; cursor: pointer;
+  border: 1px solid var(--lijn); border-radius: 8px; background: var(--wit); color: var(--blauw);
+}
+.paginering button:hover:not(:disabled) { border-color: var(--blauw-licht); }
+.paginering button.actief { background: var(--blauw); border-color: var(--blauw); color: var(--wit); }
+.paginering button:disabled { opacity: .4; cursor: default; }
+.paginering .puntjes { color: var(--grijs); padding: 0 2px; }
+.makelaar-logo { max-height: 56px; max-width: 200px; width: auto; object-fit: contain; margin: 4px 0 10px; }
+.verkoper { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--grijs); margin: 0 0 6px !important; }
 .kaart h2 { font-size: 1.05rem; margin: 0; }
 .plaats { margin: 2px 0 8px; color: var(--grijs); }
 .prijs { font-weight: 700; font-size: 1.15rem; margin: 0 0 6px; color: var(--tekst); }
 .prijs small { font-weight: 400; font-size: .8rem; color: var(--grijs); }
 .kenmerken { margin: 0 0 6px; font-size: .9rem; }
-.makelaar { margin: 0; font-size: .82rem; color: var(--grijs); }
 .geen-foto { display: grid; place-items: center; height: 100%; min-height: 180px; color: var(--grijs); }
 
 .labels { position: absolute; top: 10px; left: 10px; display: flex; gap: 6px; flex-wrap: wrap; }

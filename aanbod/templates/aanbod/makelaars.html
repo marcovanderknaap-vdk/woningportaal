@@ -6,6 +6,7 @@
   <div class="makelaars">
     {% for m in makelaars %}
     <article class="makelaarblok">
+      {% if m.logo_url %}<img class="makelaar-logo" src="{{ m.logo_url }}" alt="Logo {{ m.naam }}">{% endif %}
       <h2>{{ m.naam }}</h2>
       {% if m.straat %}<p>{{ m.straat }}<br>{{ m.postcode }} {{ m.plaats }}</p>{% endif %}
       {% if m.telefoon %}<p>Tel. {{ m.telefoon }}</p>{% endif %}

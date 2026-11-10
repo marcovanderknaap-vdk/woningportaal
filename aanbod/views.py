@@ -16,6 +16,15 @@ PRIJSKLASSEN = [
     ("750000-", "vanaf € 750.000", 750_000, None),
 ]
 
+CATEGORIEEN = [("woning", "Woning"), ("appartement", "Appartement"), ("bouwgrond", "Bouwgrond")]
+PER_PAGINA = [12, 24, 48, 96]
+
+
+def categorie(woningtype):
+    if woningtype in ("appartement", "bouwgrond"):
+        return woningtype
+    return "woning"
+
 
 def _media_url(request, bestand):
     if not bestand:
@@ -36,6 +45,7 @@ def woning_json(request, w):
         "status": w.status,
         "statusLabel": w.get_status_display(),
         "type": w.woningtype,
+        "categorie": categorie(w.woningtype),
         "typeLabel": w.get_woningtype_display(),
         "opp": w.woonoppervlakte,
         "perceel": w.perceeloppervlakte,
@@ -46,6 +56,7 @@ def woning_json(request, w):
         "foto": _media_url(request, w.foto) or w.foto_bron_url,
         "url": f"{basis}woning/{w.pk}/",
         "makelaar": w.makelaar.naam,
+        "logo": _media_url(request, w.makelaar.logo),
     }
 
 
@@ -62,6 +73,8 @@ def index(request):
             "plaatsen": sorted(plaatsen.items()),
             "prijsklassen": PRIJSKLASSEN,
             "types": Woning.Type.choices,
+            "categorieen": CATEGORIEEN,
+            "per_pagina": PER_PAGINA,
             "statussen": Woning.Status.choices,
             "makelaars_aantal": Makelaar.objects.filter(actief=True).count(),
         },
@@ -89,6 +102,7 @@ def detail(request, pk):
             "woning": woning,
             "hoofd": [(k, v) for k, v in hoofd if v],
             "foto": _media_url(request, woning.foto) or woning.foto_bron_url,
+            "logo": _media_url(request, woning.makelaar.logo),
         },
     )
 
@@ -97,6 +111,7 @@ def makelaars(request):
     lijst = list(Makelaar.objects.filter(actief=True))
     for m in lijst:
         m.aantal = Woning.objects.zichtbaar().filter(makelaar=m).count()
+        m.logo_url = _media_url(request, m.logo)
     return render(request, "aanbod/makelaars.html", {"makelaars": lijst})
 
 

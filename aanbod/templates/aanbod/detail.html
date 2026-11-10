@@ -22,6 +22,8 @@
       </dl>
       <a class="knop" href="{{ woning.url }}" target="_blank" rel="noopener">Bekijk bij {{ woning.makelaar.naam }} ↗</a>
       <div class="makelaarblok">
+        <p class="verkoper">Verkopend makelaar</p>
+        {% if logo %}<img class="makelaar-logo" src="{{ logo }}" alt="Logo {{ woning.makelaar.naam }}">{% endif %}
         <p><strong>{{ woning.makelaar.naam }}</strong></p>
         {% if woning.makelaar.straat %}<p>{{ woning.makelaar.straat }}<br>{{ woning.makelaar.postcode }} {{ woning.makelaar.plaats }}</p>{% endif %}
         {% if woning.makelaar.telefoon %}<p>Tel. <a href="tel:{{ woning.makelaar.telefoon }}">{{ woning.makelaar.telefoon }}</a></p>{% endif %}

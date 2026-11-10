@@ -47,7 +47,11 @@ class Makelaar(models.Model):
         "maximaal aantal overzichtspagina's", default=30
     )
     actief = models.BooleanField(default=True, help_text="Alleen actieve makelaars worden dagelijks gecontroleerd.")
-    logo = models.ImageField(upload_to="makelaars/", blank=True)
+    logo = models.FileField(
+        upload_to="makelaars/", blank=True,
+        help_text="SVG, PNG of JPG. Leeg = wordt automatisch van de website van de makelaar gehaald.",
+    )
+    logo_bron_url = models.URLField(max_length=500, blank=True, editable=False)
 
     laatste_controle = models.DateTimeField(null=True, blank=True, editable=False)
     laatste_succes = models.DateTimeField(null=True, blank=True, editable=False)
