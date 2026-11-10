@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html, format_html_join
 
-from .models import GenegeerdeUrl, Makelaar, OphaalRun, Woning, WoningStatusHistorie
+from .models import GenegeerdeUrl, Makelaar, OphaalRun, Vestiging, Woning, WoningStatusHistorie
 
 
 def _op_achtergrond(makelaars, droog):
@@ -26,15 +26,22 @@ def _op_achtergrond(makelaars, droog):
     threading.Thread(target=taak, daemon=True).start()
 
 
+class VestigingInline(admin.TabularInline):
+    model = Vestiging
+    extra = 1
+    fields = ("naam", "straat", "postcode", "plaats", "telefoon", "email", "volgorde")
+
+
 @admin.register(Makelaar)
 class MakelaarAdmin(admin.ModelAdmin):
-    list_display = ("naam", "plaats", "actief", "aantal_woningen", "laatste_controle", "toestand")
+    inlines = [VestigingInline]
+    list_display = ("naam", "kantoren", "actief", "aantal_woningen", "laatste_controle", "toestand")
     list_filter = ("actief",)
-    search_fields = ("naam", "plaats")
+    search_fields = ("naam", "vestigingen__plaats")
     actions = ["nu_controleren", "testen"]
     readonly_fields = ("laatste_controle", "laatste_succes", "laatste_fout_tekst", "recente_controles")
     fieldsets = (
-        ("Bedrijfsgegevens", {"fields": ("naam", ("straat", "postcode", "plaats"), ("telefoon", "email"), "website", "logo")}),
+        ("Bedrijfsgegevens", {"fields": ("naam", "email", "website", "logo")}),
         ("Aanbod ophalen", {"fields": ("aanbod_url", "bron_type", "actief")}),
         ("Geavanceerd (meestal niet nodig)", {"classes": ("collapse",), "fields": ("link_patroon", "extra_urls", "max_paginas")}),
         ("Laatste controles", {"fields": ("laatste_controle", "laatste_succes", "laatste_fout_tekst", "recente_controles")}),
@@ -44,6 +51,10 @@ class MakelaarAdmin(admin.ModelAdmin):
         return super().get_queryset(request).annotate(
             _aantal=Count("woningen", filter=Q(woningen__online=True))
         )
+
+    @admin.display(description="vestigingen")
+    def kantoren(self, obj):
+        return ", ".join(v.plaats for v in obj.vestigingen.all()) or "–"
 
     @admin.display(description="woningen online", ordering="_aantal")
     def aantal_woningen(self, obj):

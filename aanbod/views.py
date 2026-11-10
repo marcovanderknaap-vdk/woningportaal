@@ -106,6 +106,11 @@ def detail(request, pk):
             "hoofd": [(k, v) for k, v in hoofd if v],
             "foto": _media_url(request, woning.foto) or woning.foto_bron_url,
             "logo": _media_url(request, woning.makelaar.logo),
+            # Kantoor in de woonplaats van de woning bovenaan
+            "vestigingen": sorted(
+                woning.makelaar.vestigingen.all(),
+                key=lambda v: (v.plaats.lower() != (woning.woonplaats or "").lower(), v.volgorde),
+            ),
         },
     )
 

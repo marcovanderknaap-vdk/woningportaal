@@ -1,3 +1,4 @@
+import re
 from datetime import timedelta
 
 from django.conf import settings
@@ -11,10 +12,6 @@ class Makelaar(models.Model):
         SITEMAP = "sitemap", "XML-sitemap"
 
     naam = models.CharField("bedrijfsnaam", max_length=200)
-    straat = models.CharField("straat en huisnummer", max_length=200, blank=True)
-    postcode = models.CharField(max_length=10, blank=True)
-    plaats = models.CharField(max_length=100, blank=True)
-    telefoon = models.CharField(max_length=30, blank=True)
     email = models.EmailField("e-mail", blank=True)
     website = models.URLField(blank=True)
     aanbod_url = models.URLField(
@@ -76,6 +73,39 @@ class Makelaar(models.Model):
         urls = [self.aanbod_url]
         urls += [u.strip() for u in self.extra_urls.splitlines() if u.strip()]
         return urls
+
+
+class Vestiging(models.Model):
+    """Een kantoor van een makelaar (adres en telefoon voor bezoekers)."""
+
+    makelaar = models.ForeignKey(Makelaar, on_delete=models.CASCADE, related_name="vestigingen")
+    naam = models.CharField("naam", max_length=100, blank=True, help_text="Bijv. 'Kantoor Goes'. Leeg = de plaatsnaam.")
+    straat = models.CharField("straat en huisnummer", max_length=200)
+    postcode = models.CharField(max_length=10)
+    plaats = models.CharField(max_length=100)
+    telefoon = models.CharField(max_length=30, blank=True)
+    email = models.EmailField("e-mail", blank=True)
+    volgorde = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        verbose_name = "vestiging"
+        verbose_name_plural = "vestigingen"
+        ordering = ["volgorde", "plaats"]
+
+    def __str__(self):
+        return f"{self.makelaar} – {self.naam or self.plaats}"
+
+    @property
+    def telefoon_link(self):
+        """'0118-729 999' → 'tel:+31118729999' (internationaal, werkt ook vanaf een Belgisch toestel)."""
+        cijfers = re.sub(r"\D", "", self.telefoon)
+        if cijfers.startswith("0031"):
+            cijfers = cijfers[4:]
+        elif cijfers.startswith("31") and len(cijfers) == 11:
+            cijfers = cijfers[2:]
+        if cijfers.startswith("0"):
+            cijfers = cijfers[1:]
+        return f"tel:+31{cijfers}" if cijfers else ""
 
 
 class WoningQuerySet(models.QuerySet):

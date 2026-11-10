@@ -101,6 +101,16 @@ class LinksTest(TestCase):
         self.assertEqual(len(kies_woninglinks(links)), 3)
 
 
+class TelefoonTest(TestCase):
+    def test_tel_link(self):
+        from .models import Vestiging
+        m = Makelaar.objects.create(naam="T", aanbod_url="https://t.nl/")
+        for invoer, verwacht in [("0118-729 999", "tel:+31118729999"), ("0113 251 000", "tel:+31113251000"),
+                                 ("0031113250555", "tel:+31113250555"), ("+31 115 553010", "tel:+31115553010")]:
+            v = Vestiging(makelaar=m, straat="x", postcode="1234 AB", plaats="Goes", telefoon=invoer)
+            self.assertEqual(v.telefoon_link, verwacht, invoer)
+
+
 class CategorieTest(TestCase):
     def test_categorie(self):
         from .views import categorie

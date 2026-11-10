@@ -1,86 +1,184 @@
 [
   {
     "naam": "M2 Makelaars",
-    "straat": "",
-    "postcode": "",
-    "plaats": "",
-    "telefoon": "",
     "email": "",
     "website": "https://www.m2makelaars.nl",
     "aanbod_url": "https://www.m2makelaars.nl/aanbod/beschikbaar/",
     "bron_type": "aanbodpagina",
     "link_patroon": "",
     "extra_urls": "",
-    "actief": true
+    "actief": true,
+    "logo_bestand": "",
+    "vestigingen": [
+      {
+        "naam": "Walcheren",
+        "straat": "Paul Krugerstraat 9",
+        "postcode": "4382 MA",
+        "plaats": "Vlissingen",
+        "telefoon": "0118-442200",
+        "email": ""
+      },
+      {
+        "naam": "Zeeuws-Vlaanderen",
+        "straat": "Weststraat 69",
+        "postcode": "4571 HK",
+        "plaats": "Axel",
+        "telefoon": "0115-768080",
+        "email": "axel@m2makelaars.nl"
+      }
+    ]
   },
   {
     "naam": "Casco Makelaars",
-    "straat": "",
-    "postcode": "",
-    "plaats": "",
-    "telefoon": "",
     "email": "",
     "website": "https://www.cascomakelaars.nl",
     "aanbod_url": "https://www.cascomakelaars.nl/aanbod/woningaanbod/",
     "bron_type": "aanbodpagina",
     "link_patroon": "/aanbod/woningaanbod/[^/]+/koop/",
     "extra_urls": "",
-    "actief": true
+    "actief": true,
+    "logo_bestand": "",
+    "vestigingen": [
+      {
+        "naam": "Middelburg",
+        "straat": "Burgemeester Dregmansstraat 1",
+        "postcode": "4335 BG",
+        "plaats": "Middelburg",
+        "telefoon": "0118-729 999",
+        "email": ""
+      }
+    ]
   },
   {
     "naam": "Faasse & Fermont",
-    "straat": "",
-    "postcode": "",
-    "plaats": "",
-    "telefoon": "",
     "email": "",
     "website": "https://faasse-fermont.nl",
     "aanbod_url": "https://faasse-fermont.nl/huis/",
     "bron_type": "aanbodpagina",
     "link_patroon": "",
     "extra_urls": "",
-    "actief": true
+    "actief": true,
+    "logo_bestand": "",
+    "vestigingen": [
+      {
+        "naam": "Kantoor Goes",
+        "straat": "Frans den Hollanderlaan 12",
+        "postcode": "4461 HN",
+        "plaats": "Goes",
+        "telefoon": "0113-250555",
+        "email": "info@faasse-fermont.nl"
+      },
+      {
+        "naam": "Kantoor Middelburg",
+        "straat": "Oostperkweg 3",
+        "postcode": "4332 SB",
+        "plaats": "Middelburg",
+        "telefoon": "0118-727000",
+        "email": "info@faasse-fermont.nl"
+      }
+    ]
   },
   {
     "naam": "Kuub Makelaars",
-    "straat": "",
-    "postcode": "",
-    "plaats": "",
-    "telefoon": "",
     "email": "",
     "website": "https://www.kuubmakelaars.nl",
     "aanbod_url": "https://www.kuubmakelaars.nl/realworks_wonen-sitemap.xml",
     "bron_type": "sitemap",
     "link_patroon": "",
     "extra_urls": "",
-    "actief": true
+    "actief": true,
+    "logo_bestand": "",
+    "vestigingen": [
+      {
+        "naam": "Axel",
+        "straat": "Noordstraat 12",
+        "postcode": "4571 GD",
+        "plaats": "Axel",
+        "telefoon": "0115-553010",
+        "email": ""
+      },
+      {
+        "naam": "Goes",
+        "straat": "Kornetstraat 6",
+        "postcode": "4462 MV",
+        "plaats": "Goes",
+        "telefoon": "0113-227788",
+        "email": ""
+      },
+      {
+        "naam": "Middelburg",
+        "straat": "Korte Geere 1",
+        "postcode": "4331 LE",
+        "plaats": "Middelburg",
+        "telefoon": "0118-234455",
+        "email": ""
+      },
+      {
+        "naam": "Zierikzee",
+        "straat": "Nieuwe Bogerdstraat 7",
+        "postcode": "4301 CV",
+        "plaats": "Zierikzee",
+        "telefoon": "0111-416888",
+        "email": ""
+      }
+    ]
   },
   {
     "naam": "Schulting & Partners",
-    "straat": "",
-    "postcode": "",
-    "plaats": "",
-    "telefoon": "",
     "email": "",
     "website": "https://www.schulting-partners.nl",
     "aanbod_url": "https://www.schulting-partners.nl/koopwoningen",
     "bron_type": "aanbodpagina",
     "link_patroon": "",
     "extra_urls": "",
-    "actief": true
+    "actief": true,
+    "logo_bestand": "makelaars/logos/schulting-partners_20261110.png",
+    "vestigingen": [
+      {
+        "naam": "Middelburg",
+        "straat": "Herengracht 2",
+        "postcode": "4331 PW",
+        "plaats": "Middelburg",
+        "telefoon": "0118-616617",
+        "email": "info@schulting-partners.nl"
+      }
+    ]
   },
   {
     "naam": "Sinke Komejan",
-    "straat": "",
-    "postcode": "",
-    "plaats": "",
-    "telefoon": "",
     "email": "",
     "website": "https://www.sinke.nl",
     "aanbod_url": "https://www.sinke.nl/woningaanbod/",
     "bron_type": "aanbodpagina",
     "link_patroon": "",
     "extra_urls": "",
-    "actief": true
+    "actief": true,
+    "logo_bestand": "",
+    "vestigingen": [
+      {
+        "naam": "Middelburg",
+        "straat": "Molenwater 97",
+        "postcode": "4331 SG",
+        "plaats": "Middelburg",
+        "telefoon": "0118 689 000",
+        "email": "middelburg@sinke.nl"
+      },
+      {
+        "naam": "Goes",
+        "straat": "Oostwal 2c",
+        "postcode": "4461 JT",
+        "plaats": "Goes",
+        "telefoon": "0113 251 000",
+        "email": "goes@sinke.nl"
+      },
+      {
+        "naam": "Zierikzee",
+        "straat": "Havenplein 5",
+        "postcode": "4301 JD",
+        "plaats": "Zierikzee",
+        "telefoon": "0111 451 500",
+        "email": "zierikzee@sinke.nl"
+      }
+    ]
   }
 ]

@@ -120,7 +120,7 @@
           ${k ? `<p class="kenmerken">${k}</p>` : ''}
           <p class="kaart__soort">${esc(w.typeLabel)}</p>
         </div>
-        <div class="kaart__makelaar">${w.logo ? `<img src="${esc(w.logo)}" alt="" loading="lazy">` : ''}<span>${esc(w.makelaar)}</span></div>
+        <div class="kaart__makelaar">${w.logo ? `<img src="${esc(w.logo)}" alt="${esc(w.makelaar)}" loading="lazy">` : `<span>${esc(w.makelaar)}</span>`}</div>
       </a>
     </article>`;
   }

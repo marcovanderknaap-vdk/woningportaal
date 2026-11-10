@@ -11,8 +11,14 @@
       <article class="paneel">
         {% if m.logo_url %}<img class="makelaar-logo" src="{{ m.logo_url }}" alt="Logo {{ m.naam }}">{% endif %}
         <h2>{{ m.naam }}</h2>
-        {% if m.straat %}<p>{{ m.straat }}<br>{{ m.postcode }} {{ m.plaats }}</p>{% endif %}
-        {% if m.telefoon %}<p>Telefoon {{ m.telefoon }}</p>{% endif %}
+        <ul class="kantoren">
+          {% for v in m.vestigingen.all %}
+          <li class="kantoor">
+            <address>{{ v.straat }}<br>{{ v.postcode }} {{ v.plaats }}</address>
+            {% if v.telefoon %}<a href="{{ v.telefoon_link }}" aria-label="Bel {{ m.naam }} {{ v.plaats }}: {{ v.telefoon }}">{{ v.telefoon }}</a>{% endif %}
+          </li>
+          {% endfor %}
+        </ul>
         <p>{{ m.aantal }} woning{{ m.aantal|pluralize:"en" }} op Weune</p>
         {% if m.website %}<p><a href="{{ m.website }}" target="_blank" rel="noopener">Naar de website van {{ m.naam }}</a></p>{% endif %}
       </article>

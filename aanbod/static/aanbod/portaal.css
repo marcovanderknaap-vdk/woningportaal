@@ -124,7 +124,9 @@ select.gekozen { background-color: var(--weune-golf-licht); border-color: var(--
   padding: 10px var(--weune-ruimte-4); border-top: 1px solid var(--weune-lijn);
   font-size: var(--weune-fs-klein); color: var(--weune-tekst-2);
 }
-.kaart__makelaar img { height: 28px; width: auto; max-width: 112px; object-fit: contain; flex: none; }
+/* Vast logovak: brede logo's worden begrensd in de breedte, staande logo's mogen de volle hoogte gebruiken */
+.kaart__makelaar { min-height: 76px; }
+.kaart__makelaar img { height: 56px; width: auto; max-width: 120px; object-fit: contain; object-position: left center; flex: none; }
 .kaart__makelaar span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .labels { position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; flex-wrap: wrap; }
@@ -165,8 +167,15 @@ select.gekozen { background-color: var(--weune-golf-licht); border-color: var(--
 .weune-knop--primair:hover { color: var(--weune-wit); }
 .makelaarblok { border-top: 1px solid var(--weune-lijn); margin-top: var(--weune-ruimte-5); padding-top: var(--weune-ruimte-4); display: grid; gap: 6px; }
 .makelaarblok__label { font-size: var(--weune-fs-label); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--weune-tekst-3); }
-.makelaar-logo { max-height: 56px; max-width: 200px; width: auto; object-fit: contain; margin: 4px 0; }
+.makelaar-logo { max-height: 96px; max-width: 220px; width: auto; object-fit: contain; margin: 4px 0; }
 .makelaarblok__naam { font-weight: 600; color: var(--weune-nacht); }
+.kantoren { list-style: none; margin: var(--weune-ruimte-2) 0 0; padding: 0; display: grid; gap: var(--weune-ruimte-4); }
+.kantoor { display: grid; gap: 6px; justify-items: start; }
+.kantoor + .kantoor { border-top: 1px solid var(--weune-lijn); padding-top: var(--weune-ruimte-4); }
+.kantoor__naam { font-weight: 600; color: var(--weune-nacht); }
+.kantoor address { font-style: normal; color: var(--weune-tekst-2); }
+.kantoor__bel { margin-top: 4px; font-variant-numeric: tabular-nums; }
+.kantoor__mail { font-size: var(--weune-fs-klein); overflow-wrap: anywhere; }
 .tekstblok { margin-top: var(--weune-ruimte-5); }
 .tekstblok p { max-width: 70ch; }
 .tekstblok p + p { margin-top: var(--weune-ruimte-3); }
