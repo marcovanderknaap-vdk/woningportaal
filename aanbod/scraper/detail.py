@@ -132,7 +132,7 @@ def normaliseer_type(*teksten):
         return "bouwgrond"
     if re.search(r"appartement|bovenwoning|benedenwoning|maisonnette|penthouse|portiek|galerij|flat\b|studio|bovenhuis|benedenhuis", t):
         return "appartement"
-    if re.search(r"2[\s-]?onder[\s-]?1[\s-]?kap|twee[\s-]?onder[\s-]?een[\s-]?kap|halfvrijstaand|half vrijstaand|geschakelde 2", t):
+    if re.search(r"2[\s-]?onder[\s-]?1[\s-]?kap|twee[\s-]?onder[\s-]?([eé]{1,2}n|1)[\s-]?kap|halfvrijstaand|half vrijstaand|geschakelde 2", t):
         return "2-onder-1-kap"
     if re.search(r"hoekwoning|eindwoning|hoekhuis", t):
         return "hoekwoning"
@@ -147,7 +147,7 @@ def normaliseer_type(*teksten):
 
 TYPE_WOORDEN = {
     "vrijstaand": r"vrijstaande (woning|villa|boerderij|woonboerderij)|\bvilla\b|landhuis|bungalow|woonboerderij",
-    "2-onder-1-kap": r"2[\s-]?onder[\s-]?1[\s-]?kap|twee[\s-]?onder[\s-]?een[\s-]?kap|halfvrijstaand",
+    "2-onder-1-kap": r"2[\s-]?onder[\s-]?1[\s-]?kap|twee[\s-]?onder[\s-]?([eé]{1,2}n|1)[\s-]?kap|halfvrijstaand|half vrijstaand|geschakelde (woning|hoekwoning|villa)",
     "hoekwoning": r"hoekwoning|eindwoning",
     "tussenwoning": r"tussenwoning|rijwoning",
     "appartement": r"\bappartement\b|bovenwoning|benedenwoning|penthouse|maisonnette",

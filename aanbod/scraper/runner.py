@@ -21,6 +21,13 @@ from .logo import haal_logo
 log = logging.getLogger("aanbod.scraper")
 
 GENEGEERD_GELDIG_DAGEN = 30
+OUDE_LINK = "oude link van een woning die opnieuw in verkoop is gezet"
+
+
+def _is_oudere_link(nieuw, bestaand):
+    """True als `bestaand` een vervolglink van `nieuw` is, bijv. nieuw '.../huis/' en bestaand '.../huis-2/'."""
+    basis = nieuw.rstrip("/")
+    return bestaand.rstrip("/").startswith(basis + "-") and bestaand.rstrip("/")[len(basis) + 1:].isdigit()
 
 
 class Controle:
@@ -89,7 +96,9 @@ class Controle:
 
         bekend = set(self.m.woningen.values_list("url", flat=True))
         grens = timezone.now() - timedelta(days=GENEGEERD_GELDIG_DAGEN)
-        genegeerd = set(self.m.genegeerd.filter(datum__gte=grens).values_list("url", flat=True))
+        genegeerd = set(
+            self.m.genegeerd.filter(Q(datum__gte=grens) | Q(reden=OUDE_LINK)).values_list("url", flat=True)
+        )
         nieuw = [l for l in links if l not in bekend and l not in genegeerd]
         if self.limiet is not None:
             nieuw = nieuw[: self.limiet]
@@ -162,10 +171,19 @@ class Controle:
             self.m.woningen.filter(adres__iexact=res.adres, woonplaats__iexact=res.woonplaats).order_by("eerst_gezien").first()
             if res.adres and res.woonplaats else None
         )
+        if bestaand and _is_oudere_link(url, bestaand.url):
+            # Beide links bestaan nog; de bestaande ('...-2/') is de recentste
+            self._negeer(url, OUDE_LINK)
+            return
         if bestaand:
             self._log(f"NIEUWE LINK voor bestaande woning {bestaand}: {url}")
             if not self.droog:
                 oude_status, oude_prijs = bestaand.status, bestaand.vraagprijs
+                # De oude link blijvend negeren, anders springt de woning elke dag heen en weer
+                GenegeerdeUrl.objects.update_or_create(
+                    makelaar=self.m, url=bestaand.url,
+                    defaults={"reden": OUDE_LINK, "datum": timezone.now()},
+                )
                 bestaand.url = url
                 bestaand.online = True
                 bestaand.laatst_gezien = bestaand.laatst_gecontroleerd = timezone.now()
