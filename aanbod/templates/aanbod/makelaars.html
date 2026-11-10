@@ -1,19 +1,23 @@
 {% extends "aanbod/base.html" %}
 {% block titel %}Aangesloten makelaars – {{ PORTAAL_NAAM }}{% endblock %}
+{% block og_titel %}Aangesloten makelaars{% endblock %}
 {% block inhoud %}
-<div class="detail">
-  <h1>Aangesloten makelaars</h1>
-  <div class="makelaars">
-    {% for m in makelaars %}
-    <article class="makelaarblok">
-      {% if m.logo_url %}<img class="makelaar-logo" src="{{ m.logo_url }}" alt="Logo {{ m.naam }}">{% endif %}
-      <h2>{{ m.naam }}</h2>
-      {% if m.straat %}<p>{{ m.straat }}<br>{{ m.postcode }} {{ m.plaats }}</p>{% endif %}
-      {% if m.telefoon %}<p>Tel. {{ m.telefoon }}</p>{% endif %}
-      <p>{{ m.aantal }} woning{{ m.aantal|pluralize:"en" }} in ons overzicht</p>
-      {% if m.website %}<p><a href="{{ m.website }}" target="_blank" rel="noopener">Website ↗</a></p>{% endif %}
-    </article>
-    {% endfor %}
+<div class="pagina">
+  <div class="binnen">
+    <h1>Aangesloten makelaars</h1>
+    <p class="pagina__intro">Op Weune staat alleen aanbod van NVM-makelaars in Zeeland. Elke makelaar hieronder is aangesloten en levert zijn aanbod dagelijks aan.</p>
+    <div class="makelaars">
+      {% for m in makelaars %}
+      <article class="paneel">
+        {% if m.logo_url %}<img class="makelaar-logo" src="{{ m.logo_url }}" alt="Logo {{ m.naam }}">{% endif %}
+        <h2>{{ m.naam }}</h2>
+        {% if m.straat %}<p>{{ m.straat }}<br>{{ m.postcode }} {{ m.plaats }}</p>{% endif %}
+        {% if m.telefoon %}<p>Telefoon {{ m.telefoon }}</p>{% endif %}
+        <p>{{ m.aantal }} woning{{ m.aantal|pluralize:"en" }} op Weune</p>
+        {% if m.website %}<p><a href="{{ m.website }}" target="_blank" rel="noopener">Naar de website van {{ m.naam }}</a></p>{% endif %}
+      </article>
+      {% endfor %}
+    </div>
   </div>
 </div>
 {% endblock %}

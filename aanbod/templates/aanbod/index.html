@@ -1,29 +1,30 @@
 {% extends "aanbod/base.html" %}
 {% block inhoud %}
-<section class="held">
-  <div class="held__binnen">
-    <h1>Koopwoningen in Zeeland</h1>
-    <p>Het actuele aanbod van {{ makelaars_aantal }} Zeeuwse makelaars, elke dag bijgewerkt.</p>
-    <form class="filters" id="filters" onsubmit="return false">
-      <label for="f-plaats">Woonplaats
+{% include "aanbod/includes/iconen.html" %}
+<section class="hero">
+  <div class="binnen">
+    <h1>Wonen in Zeeland begint hier</h1>
+    <p class="hero__intro">Het aanbod van {{ makelaars_aantal }} Zeeuwse NVM-makelaars op één plek, elke dag bijgewerkt. Kies wat bij je past.</p>
+    <form class="zoekpaneel" id="filters" role="search" aria-label="Woningen zoeken" onsubmit="return false">
+      <label class="veld" for="f-plaats"><span>Woonplaats</span>
         <select id="f-plaats" name="plaats">
           <option value="">Alle plaatsen</option>
           {% for plaats, n in plaatsen %}<option value="{{ plaats }}">{{ plaats }} ({{ n }})</option>{% endfor %}
         </select>
       </label>
-      <label for="f-prijs">Prijsklasse
+      <label class="veld" for="f-prijs"><span>Prijsklasse</span>
         <select id="f-prijs" name="prijs">
           <option value="">Alle prijzen</option>
           {% for code, label, min, max in prijsklassen %}<option value="{{ code }}">{{ label }}</option>{% endfor %}
         </select>
       </label>
-      <label for="f-categorie">Woning of appartement
+      <label class="veld" for="f-categorie"><span>Woning of appartement</span>
         <select id="f-categorie" name="categorie">
           <option value="">Alles</option>
           {% for code, label in categorieen %}<option value="{{ code }}">{{ label }}</option>{% endfor %}
         </select>
       </label>
-      <label for="f-type">Soort woning
+      <label class="veld" for="f-type"><span>Soort woning</span>
         <select id="f-type" name="type">
           <option value="">Alle soorten</option>
           {% for code, label in types %}<option value="{{ code }}">{{ label }}</option>{% endfor %}
@@ -34,30 +35,35 @@
   </div>
 </section>
 
-<section class="resultaten" id="resultaten">
-  <div class="resultaten__kop">
-    <p id="telling" aria-live="polite">{{ aantal }} woningen</p>
-    <div class="weergave">
-      <label class="sorteer" for="per">Per pagina
-        <select id="per">
-          {% for n in per_pagina %}<option value="{{ n }}"{% if n == 24 %} selected{% endif %}>{{ n }}</option>{% endfor %}
-        </select>
-      </label>
-      <label class="sorteer" for="sorteer">Sorteer
-        <select id="sorteer">
-          <option value="nieuw">Nieuwste eerst</option>
-          <option value="prijs-op">Prijs (laag – hoog)</option>
-          <option value="prijs-af">Prijs (hoog – laag)</option>
-          <option value="opp-af">Woonoppervlakte (groot – klein)</option>
-          <option value="plaats">Woonplaats (A – Z)</option>
-        </select>
-      </label>
+<section class="resultaten" id="resultaten" aria-label="Zoekresultaten">
+  <div class="binnen">
+    <div class="resultaten__kop">
+      <p id="telling" aria-live="polite">{{ aantal }} woningen</p>
+      <div class="weergave">
+        <label for="per">Per pagina
+          <select id="per">
+            {% for n in per_pagina %}<option value="{{ n }}"{% if n == 24 %} selected{% endif %}>{{ n }}</option>{% endfor %}
+          </select>
+        </label>
+        <label for="sorteer">Sorteer
+          <select id="sorteer">
+            <option value="nieuw">Nieuwste eerst</option>
+            <option value="prijs-op">Prijs (laag – hoog)</option>
+            <option value="prijs-af">Prijs (hoog – laag)</option>
+            <option value="opp-af">Woonoppervlakte (groot – klein)</option>
+            <option value="plaats">Woonplaats (A – Z)</option>
+          </select>
+        </label>
+      </div>
     </div>
+    <div class="raster" id="raster"></div>
+    <div class="leeg" id="leeg" hidden>
+      <p>Geen woningen gevonden met deze selectie. Probeer een andere woonplaats of prijsklasse.</p>
+      <button type="button" class="weune-knop weune-knop--secundair" id="wis">Filters wissen</button>
+    </div>
+    <nav class="paginering" id="paginering" aria-label="Pagina's"></nav>
+    <noscript><p class="leeg">Zet JavaScript aan om het aanbod te bekijken en te filteren.</p></noscript>
   </div>
-  <div class="raster" id="raster"></div>
-  <p class="leeg" id="leeg" hidden>Geen woningen gevonden met deze selectie. <button type="button" id="wis">Filters wissen</button></p>
-  <nav class="paginering" id="paginering" aria-label="Pagina's"></nav>
-  <noscript><p class="leeg">Zet JavaScript aan om het aanbod te bekijken en te filteren.</p></noscript>
 </section>
 
 <script id="woningen-data" type="application/json">{{ woningen_json|safe }}</script>
@@ -71,8 +77,9 @@
   const telling = document.getElementById('telling');
   const leeg = document.getElementById('leeg');
   const nav = document.getElementById('paginering');
-  const euro = new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+  const getal = n => n.toLocaleString('nl-NL');
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const icoon = (naam) => `<svg class="icoon" aria-hidden="true"><use href="#i-${naam}"/></svg>`;
   let pagina = 1;
 
   // Filters, sortering en pagina uit de URL halen (zodat een selectie te delen is)
@@ -85,41 +92,49 @@
   if (params.has('per')) perSelect.value = params.get('per');
   if (params.has('pagina')) pagina = Math.max(1, parseInt(params.get('pagina'), 10) || 1);
 
+  function prijs(w) {
+    if (w.prijs) return `€ ${getal(w.prijs)}${w.conditie ? ` <span class="prijs-conditie">${esc(w.conditie)}</span>` : ''}`;
+    return `<span class="prijs-status">${w.status === 'beschikbaar' ? 'Prijs op aanvraag' : esc(w.statusLabel)}</span>`;
+  }
+
   function kaart(w) {
-    const prijs = w.prijs ? `${euro.format(w.prijs)}${w.conditie ? ' <small>' + esc(w.conditie) + '</small>' : ''}` : (w.status === 'beschikbaar' ? 'Prijs op aanvraag' : esc(w.statusLabel));
-    const kenmerken = [w.opp && `${w.opp} m² wonen`, w.perceel && `${w.perceel.toLocaleString('nl-NL')} m² perceel`, w.kamers && `${w.kamers} kamers`].filter(Boolean);
+    const k = [
+      w.opp && `<span class="kenmerk" title="Woonoppervlak">${icoon('opp')}${w.opp} m²</span>`,
+      w.perceel && `<span class="kenmerk" title="Perceel">${icoon('perceel')}${getal(w.perceel)} m²</span>`,
+      w.slaapkamers ? `<span class="kenmerk" title="Slaapkamers">${icoon('bed')}${w.slaapkamers}</span>`
+        : (w.kamers && `<span class="kenmerk" title="Kamers">${icoon('deur')}${w.kamers} kamers</span>`),
+      w.label && `<span class="kenmerk" title="Energielabel">${icoon('label')}${esc(w.label)}</span>`,
+    ].filter(Boolean).join('');
     const labels = [
-      w.nieuw ? '<span class="label label--nieuw">Nieuw</span>' : '',
-      w.status !== 'beschikbaar' ? `<span class="label label--${w.status}">${esc(w.statusLabel)}</span>` : ''
+      w.nieuw ? '<span class="weune-label weune-label--nieuw">Nieuw</span>' : '',
+      w.status !== 'beschikbaar' ? `<span class="weune-label weune-label--${w.status}">${esc(w.statusLabel)}</span>` : ''
     ].join('');
+    const alt = `Foto van ${w.adres || 'de woning'}${w.plaats ? ' in ' + w.plaats : ''}`;
     return `<article class="kaart${w.status === 'verkocht' ? ' kaart--verkocht' : ''}">
       <a href="${esc(w.url)}" class="kaart__link">
-        <div class="kaart__foto">${w.foto ? `<img src="${esc(w.foto)}" alt="" loading="lazy">` : '<div class="geen-foto">Geen foto</div>'}<div class="labels">${labels}</div></div>
+        <div class="kaart__foto">${w.foto ? `<img src="${esc(w.foto)}" alt="${esc(alt)}" loading="lazy">` : ''}<div class="labels">${labels}</div></div>
         <div class="kaart__tekst">
-          <h2>${esc(w.adres || 'Adres onbekend')}</h2>
-          <p class="plaats">${esc([w.postcode, w.plaats].filter(Boolean).join(' '))}</p>
-          <p class="prijs">${prijs}</p>
-          <p class="kenmerken">${kenmerken.map(esc).join(' · ')}</p>
-          <p class="soort">${esc(w.typeLabel)}</p>
+          <h2 class="kaart__adres">${esc(w.adres || 'Adres onbekend')}</h2>
+          <p class="kaart__plaats">${esc([w.postcode, w.plaats].filter(Boolean).join(' '))}</p>
+          <p class="weune-prijs">${prijs(w)}</p>
+          ${k ? `<p class="kenmerken">${k}</p>` : ''}
+          <p class="kaart__soort">${esc(w.typeLabel)}</p>
         </div>
-        <div class="kaart__makelaar">
-          ${w.logo ? `<img src="${esc(w.logo)}" alt="" loading="lazy">` : ''}<span>${esc(w.makelaar)}</span>
-        </div>
+        <div class="kaart__makelaar">${w.logo ? `<img src="${esc(w.logo)}" alt="" loading="lazy">` : ''}<span>${esc(w.makelaar)}</span></div>
       </a>
     </article>`;
   }
 
   function knoppen(huidig, totaal) {
     if (totaal <= 1) return '';
-    // 1 … 4 5 [6] 7 8 … 20
     const nummers = new Set([1, totaal, huidig - 1, huidig, huidig + 1]);
     if (huidig <= 3) [2, 3, 4].forEach(n => nummers.add(n));
     if (huidig >= totaal - 2) [totaal - 1, totaal - 2, totaal - 3].forEach(n => nummers.add(n));
     const lijst = [...nummers].filter(n => n >= 1 && n <= totaal).sort((a, b) => a - b);
     let html = `<button type="button" data-pagina="${huidig - 1}" ${huidig === 1 ? 'disabled' : ''} aria-label="Vorige pagina">‹ Vorige</button>`;
     lijst.forEach((n, i) => {
-      if (i && n - lijst[i - 1] > 1) html += '<span class="puntjes">…</span>';
-      html += `<button type="button" data-pagina="${n}" ${n === huidig ? 'aria-current="page" class="actief"' : ''}>${n}</button>`;
+      if (i && n - lijst[i - 1] > 1) html += '<span class="puntjes" aria-hidden="true">…</span>';
+      html += `<button type="button" data-pagina="${n}" aria-label="Pagina ${n}" ${n === huidig ? 'aria-current="page" class="actief"' : ''}>${n}</button>`;
     });
     html += `<button type="button" data-pagina="${huidig + 1}" ${huidig === totaal ? 'disabled' : ''} aria-label="Volgende pagina">Volgende ›</button>`;
     return html;
@@ -127,6 +142,7 @@
 
   function toon() {
     const f = Object.fromEntries(new FormData(form));
+    for (const el of form.querySelectorAll('select')) el.classList.toggle('gekozen', !!el.value);
     const [min, max] = (f.prijs || '').split('-').map(v => v === '' || v === undefined ? null : Number(v));
     const lijst = woningen.filter(w =>
       (!f.plaats || w.plaats === f.plaats) &&
@@ -152,9 +168,9 @@
     const start = (pagina - 1) * per;
     raster.innerHTML = lijst.slice(start, start + per).map(kaart).join('');
     nav.innerHTML = knoppen(pagina, totaal);
-    telling.textContent = lijst.length === 0 ? '0 woningen'
-      : lijst.length <= per ? (lijst.length === 1 ? '1 woning' : `${lijst.length} woningen`)
-      : `${lijst.length} woningen · ${start + 1}–${Math.min(start + per, lijst.length)} getoond`;
+    telling.textContent = lijst.length === 0 ? 'Geen woningen'
+      : lijst.length <= per ? (lijst.length === 1 ? '1 woning' : `${getal(lijst.length)} woningen`)
+      : `${getal(lijst.length)} woningen · ${start + 1}–${Math.min(start + per, lijst.length)} getoond`;
     leeg.hidden = lijst.length > 0;
 
     const p = new URLSearchParams();
@@ -175,7 +191,8 @@
     if (!knop || knop.disabled) return;
     pagina = parseInt(knop.dataset.pagina, 10);
     toon();
-    document.getElementById('resultaten').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.getElementById('resultaten').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
   });
   document.getElementById('wis').addEventListener('click', () => { form.reset(); opnieuw(); });
   toon();

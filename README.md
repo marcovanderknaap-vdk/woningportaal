@@ -1,8 +1,10 @@
-# Zeeuws Woningaanbod – conceptapplicatie
+# Weune – het Zeeuwse woningportaal
 
 Een woningportaal met het koopaanbod van aangesloten Zeeuwse makelaars.
 Elke dag haalt de applicatie het aanbod op van de websites van de makelaars,
 slaat de hoofdfoto, vraagprijs en objectdetails lokaal op en werkt de status bij.
+
+De huisstijl (logo's, kleuren, lettertypes) staat in `CLAUDE.md` en `aanbod/static/brand/`.
 
 ## Wat zit erin
 
@@ -110,6 +112,6 @@ Kopieer daarnaast de map met foto's en logo's (`data/media`). Bij elke codewijzi
 op GitHub automatisch op zowel SQLite als PostgreSQL (`.github/workflows/tests.yml`).
 
 ## Instellingen (omgevingsvariabelen)
-`PORTAAL_NAAM`, `NIEUW_DAGEN` (14), `VERKOCHT_ZICHTBAAR_DAGEN` (30), `VERKOCHT_CONTROLE_DAGEN` (30),
+`PORTAAL_NAAM` (Weune), `PORTAAL_SITE_URL` (https://www.weune.nl), `NIEUW_DAGEN` (14), `VERKOCHT_ZICHTBAAR_DAGEN` (30), `VERKOCHT_CONTROLE_DAGEN` (30),
 `SCRAPER_MIN_DELAY` (2 s), `FOTO_MAX_BREEDTE` (1200 px), `RAPPORT_EMAIL`, `EMAIL_*`,
 `PORTAAL_INDEXEREN` (uit: elke pagina krijgt `noindex` en robots.txt blokkeert alles; zet op `true` bij de livegang).

@@ -2,7 +2,10 @@ import json
 from collections import Counter
 
 from django.conf import settings
-from django.http import HttpResponse
+import mimetypes
+from pathlib import Path
+
+from django.http import FileResponse, Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
 
 from .models import Makelaar, Woning
@@ -50,6 +53,7 @@ def woning_json(request, w):
         "opp": w.woonoppervlakte,
         "perceel": w.perceeloppervlakte,
         "kamers": w.kamers,
+        "slaapkamers": w.slaapkamers,
         "label": w.energielabel,
         "nieuw": w.is_nieuw,
         "sinds": w.eerst_gezien.date().isoformat(),
@@ -84,7 +88,6 @@ def index(request):
 def detail(request, pk):
     woning = get_object_or_404(Woning.objects.select_related("makelaar"), pk=pk, verborgen=False)
     hoofd = [
-        ("Vraagprijs", woning.prijs_tekst or ("Prijs op aanvraag" if woning.status == "beschikbaar" else "")),
         ("Status", woning.get_status_display()),
         ("Soort", woning.get_woningtype_display()),
         ("Woonoppervlakte", f"{woning.woonoppervlakte} m²" if woning.woonoppervlakte else ""),
@@ -121,3 +124,36 @@ def robots_txt(request):
     else:
         regels = ["User-agent: *", "Disallow: /"]
     return HttpResponse("\n".join(regels) + "\n", content_type="text/plain")
+
+
+# Website-iconen met vaste namen, geserveerd vanuit de hoofdmap van de site
+WEBSITE_BESTANDEN = {"favicon.ico", "favicon.svg", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "og-image.png"}
+WEBSITE_MAP = Path(__file__).resolve().parent / "static" / "website"
+
+
+def website_bestand(request, naam):
+    if naam not in WEBSITE_BESTANDEN:
+        raise Http404
+    pad = WEBSITE_MAP / naam
+    type_ = "image/x-icon" if naam.endswith(".ico") else mimetypes.guess_type(naam)[0]
+    return FileResponse(open(pad, "rb"), content_type=type_)
+
+
+def manifest(request):
+    basis = getattr(request, "basis_url", "/")
+    return JsonResponse(
+        {
+            "name": settings.PORTAAL_NAAM,
+            "short_name": settings.PORTAAL_NAAM,
+            "lang": "nl",
+            "start_url": basis,
+            "display": "browser",
+            "theme_color": "#0A3A86",
+            "background_color": "#FFFFFF",
+            "icons": [
+                {"src": f"{basis}icon-192.png", "sizes": "192x192", "type": "image/png"},
+                {"src": f"{basis}icon-512.png", "sizes": "512x512", "type": "image/png"},
+            ],
+        },
+        content_type="application/manifest+json",
+    )

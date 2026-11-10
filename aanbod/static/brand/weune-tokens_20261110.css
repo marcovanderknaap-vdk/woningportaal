@@ -1,0 +1,124 @@
+/* ==========================================================================
+   Weune huisstijl – design tokens (versie 20261110)
+   Laad de lettertypes in <head>:
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+   ========================================================================== */
+
+:root {
+  /* Merkkleuren */
+  --weune-blauw: #0A3A86;          /* primair: logo, knoppen, koppen */
+  --weune-blauw-hover: #082E6B;    /* hover/active van primaire knoppen */
+  --weune-nacht: #0B1C3F;          /* footer, donkere vlakken, hero-overlay */
+  --weune-golf: #8DBBF2;           /* decoratief accent op donkere/blauwe vlakken */
+  --weune-golf-licht: #E3EEFC;     /* lichte vlakken, geselecteerde filters */
+  --weune-link: #1F5BB5;           /* tekstlinks op wit */
+  --weune-zand: #F2C14E;           /* labels 'Nieuw', 'Open huis' – altijd met nacht-tekst */
+
+  /* Neutralen */
+  --weune-wit: #FFFFFF;
+  --weune-oppervlak: #F5F8FD;      /* paginagrond, kaartachtergronden */
+  --weune-lijn: #D9E1EE;           /* randen, scheidingslijnen */
+  --weune-tekst: #1A2333;          /* lopende tekst */
+  --weune-tekst-2: #4A5872;        /* subtekst, kenmerken */
+  --weune-tekst-3: #66728A;        /* metadata, placeholders (min. 14px) */
+  --weune-tekst-op-donker: #C9D6EE;/* subtekst op nacht */
+
+  /* Status van woningen */
+  --weune-beschikbaar: #1E7A4C;
+  --weune-onder-bod: #B45309;      /* ook 'verkocht onder voorbehoud' */
+  --weune-verkocht: #B42318;
+
+  /* Typografie */
+  --weune-font-kop: "Outfit", system-ui, sans-serif;
+  --weune-font-tekst: "Inter", system-ui, sans-serif;
+
+  --weune-fs-display: clamp(2.5rem, 5vw, 3.5rem); /* 40–56px, hero */
+  --weune-fs-h1: clamp(2rem, 4vw, 2.5rem);        /* 32–40px */
+  --weune-fs-h2: 1.75rem;   /* 28px */
+  --weune-fs-h3: 1.375rem;  /* 22px */
+  --weune-fs-h4: 1.125rem;  /* 18px */
+  --weune-fs-body: 1rem;    /* 16px */
+  --weune-fs-klein: 0.875rem; /* 14px */
+  --weune-fs-label: 0.75rem;  /* 12px, alleen hoofdletterlabels */
+  --weune-fs-prijs: 1.5rem;   /* 24px, vraagprijs op kaart */
+
+  --weune-lh-kop: 1.15;
+  --weune-lh-tekst: 1.6;
+
+  /* Vorm en ruimte */
+  --weune-radius-s: 8px;    /* invoervelden, labels */
+  --weune-radius-m: 12px;   /* knoppen */
+  --weune-radius-l: 16px;   /* woningkaarten, panelen */
+  --weune-radius-xl: 24px;  /* grote beelden, hero-zoekbalk */
+
+  --weune-ruimte-1: 4px;
+  --weune-ruimte-2: 8px;
+  --weune-ruimte-3: 12px;
+  --weune-ruimte-4: 16px;
+  --weune-ruimte-5: 24px;
+  --weune-ruimte-6: 32px;
+  --weune-ruimte-7: 48px;
+  --weune-ruimte-8: 64px;
+  --weune-ruimte-9: 96px;
+
+  --weune-schaduw-kaart: 0 1px 2px rgba(11, 28, 63, 0.06), 0 4px 16px rgba(11, 28, 63, 0.06);
+  --weune-schaduw-hover: 0 2px 4px rgba(11, 28, 63, 0.08), 0 12px 32px rgba(11, 28, 63, 0.12);
+  --weune-focus: 0 0 0 3px #FFFFFF, 0 0 0 5px #1F5BB5;
+
+  --weune-max-breedte: 1280px;
+}
+
+/* Basis */
+body {
+  font-family: var(--weune-font-tekst);
+  font-size: var(--weune-fs-body);
+  line-height: var(--weune-lh-tekst);
+  color: var(--weune-tekst);
+  background: var(--weune-wit);
+}
+h1, h2, h3, h4, .weune-display {
+  font-family: var(--weune-font-kop);
+  font-weight: 600;
+  line-height: var(--weune-lh-kop);
+  color: var(--weune-nacht);
+  letter-spacing: -0.01em;
+}
+a { color: var(--weune-link); }
+a:hover { color: var(--weune-blauw); }
+:focus-visible { outline: none; box-shadow: var(--weune-focus); }
+
+/* Prijzen en cijfers altijd met gelijke cijferbreedte */
+.weune-prijs {
+  font-family: var(--weune-font-kop);
+  font-size: var(--weune-fs-prijs);
+  font-weight: 600;
+  color: var(--weune-nacht);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Knoppen */
+.weune-knop {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 0 20px;
+  border-radius: var(--weune-radius-m);
+  font: 600 1rem/1 var(--weune-font-tekst);
+  border: 2px solid transparent; cursor: pointer;
+}
+.weune-knop--primair { background: var(--weune-blauw); color: var(--weune-wit); }
+.weune-knop--primair:hover { background: var(--weune-blauw-hover); }
+.weune-knop--secundair { background: var(--weune-wit); color: var(--weune-blauw); border-color: var(--weune-blauw); }
+.weune-knop--secundair:hover { background: var(--weune-golf-licht); }
+
+/* Statuslabels */
+.weune-label {
+  display: inline-block; padding: 4px 10px;
+  border-radius: var(--weune-radius-s);
+  font: 600 var(--weune-fs-label)/1.4 var(--weune-font-tekst);
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.weune-label--nieuw { background: var(--weune-zand); color: var(--weune-nacht); }
+.weune-label--onder-bod { background: var(--weune-onder-bod); color: var(--weune-wit); }
+.weune-label--verkocht { background: var(--weune-verkocht); color: var(--weune-wit); }
+.weune-label--beschikbaar { background: var(--weune-beschikbaar); color: var(--weune-wit); }

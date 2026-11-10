@@ -1,30 +1,52 @@
-<!doctype html>
+{% load static %}<!doctype html>
 <html lang="nl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block titel %}{{ PORTAAL_NAAM }}{% endblock %}</title>
-  <meta name="description" content="{% block beschrijving %}Het complete woningaanbod van Zeeuwse makelaars op één plek.{% endblock %}">
+  <title>{% block titel %}{{ PORTAAL_NAAM }} – het Zeeuwse woningaanbod{% endblock %}</title>
+  <meta name="description" content="{% block beschrijving %}Het woningaanbod in Zeeland op één plek, van de aangesloten NVM-makelaars. Elke dag bijgewerkt.{% endblock %}">
   {% if not INDEXEREN %}<meta name="robots" content="noindex, nofollow">{% endif %}
+  <link rel="icon" href="{{ BASIS }}favicon.ico" sizes="any">
+  <link rel="icon" href="{{ BASIS }}favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="{{ BASIS }}apple-touch-icon.png">
+  <link rel="manifest" href="{{ BASIS }}site.webmanifest">
+  <meta name="theme-color" content="#0A3A86">
+  <meta property="og:site_name" content="{{ PORTAAL_NAAM }}">
+  <meta property="og:title" content="{% block og_titel %}{{ PORTAAL_NAAM }} – het Zeeuwse woningaanbod{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}{{ SITE_URL }}/og-image.png{% endblock %}">
+  <link rel="preload" href="{{ BASIS }}static/fonts/outfit-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ BASIS }}static/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ BASIS }}static/fonts/fonts.css">
+  <link rel="stylesheet" href="{{ BASIS }}static/brand/weune-tokens_20261110.css">
   <link rel="stylesheet" href="{{ BASIS }}static/aanbod/portaal.css">
 </head>
 <body>
+  <a class="naar-inhoud" href="#inhoud">Naar de inhoud</a>
   <header class="kop">
     <div class="kop__binnen">
-      <a class="logo" href="{{ BASIS }}">
-        {% if PORTAAL_LOGO %}<img class="logo__beeld" src="{{ BASIS }}static/{{ PORTAAL_LOGO }}" alt="{{ PORTAAL_NAAM }}">{% else %}{% include "aanbod/includes/beeldmerk.svg" %}<span>{{ PORTAAL_NAAM }}</span>{% endif %}
+      <a class="logo" href="{{ BASIS }}" aria-label="{{ PORTAAL_NAAM }} – naar de homepage">
+        <img class="logo__horizontaal" src="{{ BASIS }}static/brand/weune-logo-horizontaal-blauw_20261110.svg" alt="{{ PORTAAL_NAAM }}" width="144" height="40">
+        <img class="logo__beeldmerk" src="{{ BASIS }}static/brand/weune-beeldmerk-blauw_20261110.svg" alt="{{ PORTAAL_NAAM }}" width="36" height="36">
       </a>
-      <nav class="menu">
-        <a href="{{ BASIS }}">Koopwoningen</a>
-        <a href="{{ BASIS }}makelaars/">Aangesloten makelaars</a>
+      <nav class="menu" aria-label="Hoofdmenu">
+        <a href="{{ BASIS }}"{% if request.resolver_match.url_name == "index" or not request.resolver_match %} aria-current="page"{% endif %}>Koopwoningen</a>
+        <a href="{{ BASIS }}makelaars/"{% if request.resolver_match.url_name == "makelaars" %} aria-current="page"{% endif %}>Makelaars</a>
       </nav>
     </div>
   </header>
-  <main>{% block inhoud %}{% endblock %}</main>
+  <main id="inhoud">{% block inhoud %}{% endblock %}</main>
   <footer class="voet">
+    <svg class="voet__golf" viewBox="0 0 1200 24" preserveAspectRatio="none" aria-hidden="true"><path d="M0 12 q25 -12 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
     <div class="voet__binnen">
-      <p><strong>{{ PORTAAL_NAAM }}</strong> – het woningaanbod van aangesloten Zeeuwse makelaars, dagelijks bijgewerkt.</p>
-      <p class="klein">Alle informatie is afkomstig van de websites van de makelaars. Aan de getoonde gegevens kunnen geen rechten worden ontleend; kijk voor actuele informatie altijd bij de makelaar.</p>
+      <div class="voet__merk">
+        <img src="{{ BASIS }}static/brand/weune-logo-horizontaal-wit_20261110.svg" alt="{{ PORTAAL_NAAM }}" width="130" height="36">
+        <p>Het Zeeuwse woningaanbod op één plek. Alle woningen komen van aangesloten NVM-makelaars en worden elke dag bijgewerkt.</p>
+      </div>
+      <nav class="voet__links" aria-label="Voettekst">
+        <a href="{{ BASIS }}">Koopwoningen</a>
+        <a href="{{ BASIS }}makelaars/">Aangesloten makelaars</a>
+      </nav>
+      <p class="voet__klein">De informatie komt van de websites van de makelaars. Aan de getoonde gegevens kun je geen rechten ontlenen; kijk voor de actuele stand altijd bij de makelaar.</p>
     </div>
   </footer>
 </body>

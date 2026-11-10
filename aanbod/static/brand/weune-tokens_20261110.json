@@ -1,0 +1,40 @@
+{
+  "naam": "Weune huisstijl",
+  "versie": "20261110",
+  "kleuren": {
+    "merk": {
+      "blauw": { "hex": "#0A3A86", "gebruik": "primair: logo, knoppen, actieve elementen" },
+      "blauw-hover": { "hex": "#082E6B", "gebruik": "hover/active primaire knop" },
+      "nacht": { "hex": "#0B1C3F", "gebruik": "footer, donkere vlakken, koppen" },
+      "golf": { "hex": "#8DBBF2", "gebruik": "decoratief accent op blauw/nacht, nooit als tekst op wit" },
+      "golf-licht": { "hex": "#E3EEFC", "gebruik": "lichte vlakken, geselecteerde filters" },
+      "link": { "hex": "#1F5BB5", "gebruik": "tekstlinks op wit (6,5:1)" },
+      "zand": { "hex": "#F2C14E", "gebruik": "labels Nieuw / Open huis, altijd met nacht-tekst" }
+    },
+    "neutraal": {
+      "wit": "#FFFFFF",
+      "oppervlak": "#F5F8FD",
+      "lijn": "#D9E1EE",
+      "tekst": "#1A2333",
+      "tekst-2": "#4A5872",
+      "tekst-3": "#66728A",
+      "tekst-op-donker": "#C9D6EE"
+    },
+    "status": {
+      "beschikbaar": "#1E7A4C",
+      "onder-bod": "#B45309",
+      "verkocht": "#B42318"
+    }
+  },
+  "typografie": {
+    "kop": { "familie": "Outfit", "gewichten": [500, 600, 700], "bron": "Google Fonts (SIL Open Font License)" },
+    "tekst": { "familie": "Inter", "gewichten": [400, 500, 600], "bron": "Google Fonts (SIL Open Font License)" },
+    "schaal_px": { "display": "40-56", "h1": "32-40", "h2": 28, "h3": 22, "h4": 18, "body": 16, "klein": 14, "label": 12, "prijs": 24 },
+    "regelhoogte": { "kop": 1.15, "tekst": 1.6 }
+  },
+  "vorm": {
+    "radius_px": { "s": 8, "m": 12, "l": 16, "xl": 24 },
+    "ruimte_px": [4, 8, 12, 16, 24, 32, 48, 64, 96],
+    "max_breedte_px": 1280
+  }
+}

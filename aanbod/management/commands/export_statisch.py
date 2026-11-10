@@ -54,6 +54,12 @@ class Command(BaseCommand):
         statisch = Path(settings.BASE_DIR) / "aanbod" / "static"
         shutil.copytree(statisch, uit / "static")
         (uit / ".nojekyll").write_text("")
+        # Website-iconen en manifest in de hoofdmap van de site
+        for naam in views.WEBSITE_BESTANDEN:
+            shutil.copy2(views.WEBSITE_MAP / naam, uit / naam)
+        manifest_request = rf.get(basis + "site.webmanifest")
+        manifest_request.basis_url = basis
+        (uit / "site.webmanifest").write_bytes(views.manifest(manifest_request).content)
         request = rf.get("/robots.txt")
         (uit / "robots.txt").write_bytes(views.robots_txt(request).content)
         (uit / "404.html").write_text(

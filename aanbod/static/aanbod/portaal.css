@@ -1,150 +1,196 @@
-/* Zeeuws Woningaanbod – licht en Zeeuws: zeeblauw, zeenevel, zand en vlaggeel */
-:root {
-  --blauw: #134b63;          /* diep zeeblauw (Westerschelde) */
-  --blauw-licht: #22708c;    /* zeeblauw */
-  --blauw-zacht: #e2edef;    /* zeenevel */
-  --accent: #f2c12e;         /* geel uit de Zeeuwse vlag */
-  --accent-donker: #dcaa12;
-  --zand: #f1ead9;           /* strand */
-  --tekst: #1a2b33;
-  --grijs: #5a6b71;
-  --lijn: #d9e2e2;
-  --achtergrond: #f7f8f5;
-  --wit: #ffffff;
-  --optie: #b8860b;
-  --ovb: #c4551a;
-  --verkocht: #a8261c;
-  --radius: 10px;
-  --schaduw: 0 1px 2px rgba(19, 75, 99, .06), 0 4px 16px rgba(19, 75, 99, .08);
-}
+/* Weune – paginastijlen. Kleuren, lettertypes, afrondingen en schaduwen komen
+   uit de huisstijltokens (static/brand/weune-tokens_20261110.css); gebruik hier
+   geen losse hexcodes. */
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: var(--tekst);
-  background: var(--achtergrond);
-  line-height: 1.5;
-}
-a { color: var(--blauw-licht); }
+body { margin: 0; background: var(--weune-wit); }
 img { max-width: 100%; display: block; }
-h1, h2 { line-height: 1.2; color: var(--blauw); }
+[hidden] { display: none !important; }
+h1, h2, h3, h4 { margin: 0; text-wrap: balance; }
+p { margin: 0; }
+button, select, input { font: inherit; }
+:focus-visible { outline: none; box-shadow: var(--weune-focus); border-radius: var(--weune-radius-s); }
 
-/* Kop */
-.kop { background: var(--wit); color: var(--blauw); border-bottom: 4px solid var(--accent); }
-.kop__binnen, .voet__binnen, .held__binnen, .resultaten, .detail {
-  max-width: 1200px; margin: 0 auto; padding-left: 16px; padding-right: 16px;
+.binnen {
+  max-width: var(--weune-max-breedte); margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
-.kop__binnen { display: flex; align-items: center; justify-content: space-between; gap: 8px 16px; min-height: 64px; flex-wrap: wrap; padding-top: 10px; padding-bottom: 10px; }
-.logo { display: flex; align-items: center; gap: 10px; color: var(--blauw); text-decoration: none; font-weight: 700; font-size: 1.15rem; }
-.logo .beeldmerk { width: 40px; height: 40px; flex: none; }
-.logo__beeld { height: 48px; width: auto; }
-.menu { display: flex; gap: 20px; flex-wrap: wrap; }
-.menu a { color: var(--blauw-licht); text-decoration: none; font-weight: 600; }
-.menu a:hover { color: var(--blauw); text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 3px; text-underline-offset: 6px; }
+@media (min-width: 768px) { .binnen { padding-left: 32px; padding-right: 32px; } }
 
-/* Held + filters */
-.held { background: linear-gradient(180deg, var(--blauw-zacht) 0%, var(--achtergrond) 100%); color: var(--blauw); padding: 32px 0 40px; }
-.held h1 { color: var(--blauw); margin: 0 0 6px; font-size: clamp(1.6rem, 4vw, 2.3rem); }
-.held p { margin: 0 0 24px; color: var(--grijs); }
-.filters {
-  display: grid; gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  background: var(--wit); color: var(--tekst);
-  padding: 16px; border-radius: var(--radius); box-shadow: var(--schaduw); align-items: end;
+.naar-inhoud {
+  position: absolute; left: 16px; top: -100px; z-index: 20;
+  background: var(--weune-blauw); color: var(--weune-wit); padding: 12px 16px; border-radius: var(--weune-radius-m);
 }
-.filters label { display: flex; flex-direction: column; gap: 4px; font-size: .85rem; font-weight: 600; color: var(--grijs); }
+.naar-inhoud:focus { top: 16px; }
+
+/* ---- Kop -------------------------------------------------------------- */
+.kop { background: var(--weune-wit); border-bottom: 1px solid var(--weune-lijn); position: sticky; top: 0; z-index: 10; }
+.kop__binnen {
+  max-width: var(--weune-max-breedte); margin: 0 auto; min-height: 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; align-items: center; justify-content: space-between; gap: var(--weune-ruimte-4);
+}
+@media (min-width: 768px) { .kop__binnen { padding-left: 32px; padding-right: 32px; } }
+.logo { display: block; padding: 8px 0; }
+.logo__horizontaal { height: 36px; width: auto; }
+.logo__beeldmerk { display: none; height: 36px; width: 36px; }
+@media (max-width: 359px) {
+  .logo__horizontaal { display: none; }
+  .logo__beeldmerk { display: block; }
+}
+.menu { display: flex; gap: var(--weune-ruimte-1); }
+.menu a {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px;
+  color: var(--weune-tekst); text-decoration: none; font-weight: 500; border-radius: var(--weune-radius-s);
+}
+.menu a:hover { color: var(--weune-blauw); background: var(--weune-golf-licht); }
+@media (max-width: 400px) { .menu a { padding: 0 8px; font-size: var(--weune-fs-klein); } }
+.menu a[aria-current="page"] { color: var(--weune-blauw); font-weight: 600; box-shadow: inset 0 -3px 0 var(--weune-blauw); border-radius: 0; }
+
+/* ---- Hero met zoekpaneel --------------------------------------------- */
+.hero { background: linear-gradient(180deg, var(--weune-golf-licht) 0%, var(--weune-oppervlak) 100%); }
+.hero .binnen { padding-block: var(--weune-ruimte-6) var(--weune-ruimte-7); }
+@media (min-width: 768px) { .hero .binnen { padding-block: var(--weune-ruimte-7) var(--weune-ruimte-8); } }
+.hero h1 { font-size: var(--weune-fs-display); font-weight: 700; color: var(--weune-nacht); max-width: 18ch; }
+.hero__intro { margin-top: var(--weune-ruimte-3); color: var(--weune-tekst-2); font-size: 1.125rem; max-width: 60ch; }
+
+.zoekpaneel {
+  margin-top: var(--weune-ruimte-5);
+  background: var(--weune-wit); border-radius: var(--weune-radius-xl); box-shadow: var(--weune-schaduw-kaart);
+  padding: var(--weune-ruimte-4);
+  display: grid; gap: var(--weune-ruimte-3); grid-template-columns: 1fr;
+}
+@media (min-width: 560px) { .zoekpaneel { grid-template-columns: 1fr 1fr; padding: var(--weune-ruimte-5); } }
+@media (min-width: 1024px) { .zoekpaneel { grid-template-columns: repeat(4, 1fr) auto; align-items: end; } }
+.veld { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.veld > span { font-size: var(--weune-fs-klein); font-weight: 600; color: var(--weune-tekst-2); }
 select {
-  font: inherit; font-weight: 400; color: var(--tekst);
-  padding: 10px 12px; border: 1px solid var(--lijn); border-radius: 8px; background: var(--wit); width: 100%;
+  appearance: none; -webkit-appearance: none; width: 100%; min-height: 44px;
+  padding: 0 40px 0 14px; color: var(--weune-tekst); background-color: var(--weune-wit);
+  border: 1px solid var(--weune-lijn); border-radius: var(--weune-radius-s); cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%234A5872' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
 }
-select:focus, input:focus, button:focus, a:focus-visible { outline: 2px solid var(--blauw-licht); outline-offset: 2px; }
-.filters .vink { flex-direction: row; align-items: center; gap: 8px; color: var(--tekst); font-weight: 500; padding: 10px 0; }
-.vink input { width: 18px; height: 18px; accent-color: var(--blauw-licht); }
+select:hover { border-color: var(--weune-tekst-3); }
+select.gekozen { background-color: var(--weune-golf-licht); border-color: var(--weune-blauw); color: var(--weune-nacht); font-weight: 500; }
+.vink {
+  display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer;
+  font-weight: 500; color: var(--weune-tekst);
+}
+.vink input { width: 20px; height: 20px; accent-color: var(--weune-blauw); margin: 0; }
+@media (min-width: 560px) and (max-width: 1023px) { .vink { grid-column: 1 / -1; } }
 
-/* Resultaten */
-.resultaten { padding-top: 24px; padding-bottom: 48px; }
-.resultaten__kop { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
-#telling { font-weight: 700; font-size: 1.1rem; margin: 0; color: var(--blauw); }
-.sorteer { display: flex; align-items: center; gap: 8px; font-size: .9rem; color: var(--grijs); }
-.sorteer select { width: auto; }
-.raster { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); }
+/* ---- Resultaten ------------------------------------------------------- */
+.resultaten { background: var(--weune-oppervlak); }
+.resultaten .binnen { padding-block: var(--weune-ruimte-5) var(--weune-ruimte-8); }
+.resultaten__kop { display: flex; justify-content: space-between; align-items: center; gap: var(--weune-ruimte-3); flex-wrap: wrap; margin-bottom: var(--weune-ruimte-4); }
+#telling { font-family: var(--weune-font-kop); font-weight: 600; font-size: var(--weune-fs-h4); color: var(--weune-nacht); }
+.weergave { display: flex; gap: var(--weune-ruimte-4); flex-wrap: wrap; }
+.weergave label { display: flex; align-items: center; gap: var(--weune-ruimte-2); font-size: var(--weune-fs-klein); color: var(--weune-tekst-2); }
+.weergave select { width: auto; max-width: 100%; }
+.weergave label { min-width: 0; }
+@media (max-width: 479px) { .weergave { width: 100%; } .weergave label:last-child { flex: 1; } .weergave label:last-child select { flex: 1; min-width: 0; } }
 
-.kaart { background: var(--wit); border-radius: var(--radius); box-shadow: var(--schaduw); overflow: hidden; transition: transform .15s, box-shadow .15s; }
-.kaart:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(11, 42, 85, .14); }
-.kaart__link { color: inherit; text-decoration: none; display: block; height: 100%; }
-.kaart__foto { position: relative; aspect-ratio: 3 / 2; background: var(--blauw-zacht); }
+.raster { display: grid; gap: var(--weune-ruimte-5); grid-template-columns: 1fr; }
+@media (min-width: 600px) { .raster { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 960px) { .raster { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1240px) { .raster { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* ---- Woningkaart ------------------------------------------------------ */
+.kaart {
+  background: var(--weune-wit); border-radius: var(--weune-radius-l); box-shadow: var(--weune-schaduw-kaart);
+  overflow: hidden; min-width: 0; transition: box-shadow .2s, transform .2s;
+}
+.kaart:hover { box-shadow: var(--weune-schaduw-hover); transform: translateY(-2px); }
+@media (prefers-reduced-motion: reduce) { .kaart, .kaart:hover { transition: none; transform: none; } }
+.kaart__link { display: flex; flex-direction: column; height: 100%; color: inherit; text-decoration: none; border-radius: var(--weune-radius-l); }
+.kaart__foto { position: relative; aspect-ratio: 4 / 3; background: var(--weune-golf-licht); }
 .kaart__foto img { width: 100%; height: 100%; object-fit: cover; }
-.kaart--verkocht .kaart__foto img { filter: grayscale(.6); opacity: .8; }
-.kaart__link { display: flex !important; flex-direction: column; }
-.kaart__tekst { padding: 14px 16px 12px; flex: 1; }
-.soort { margin: 0; font-size: .82rem; color: var(--grijs); }
-.kaart__makelaar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-top: 1px solid var(--lijn); font-size: .85rem; color: var(--grijs); min-height: 52px; }
-.kaart__makelaar img { height: 28px; width: auto; max-width: 110px; object-fit: contain; flex: none; }
+.kaart--verkocht .kaart__foto img { filter: grayscale(.5); }
+.kaart__tekst { padding: var(--weune-ruimte-4); display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.kaart__adres { font-size: var(--weune-fs-h4); color: var(--weune-nacht); }
+.kaart__plaats { color: var(--weune-tekst-2); font-size: var(--weune-fs-klein); }
+.kaart .weune-prijs { margin-top: var(--weune-ruimte-2); }
+.prijs-conditie { font-family: var(--weune-font-tekst); font-size: var(--weune-fs-klein); font-weight: 400; color: var(--weune-tekst-2); }
+.prijs-status { font-size: var(--weune-fs-h4); }
+.kenmerken { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: var(--weune-ruimte-3); color: var(--weune-tekst-2); font-size: var(--weune-fs-klein); }
+.kenmerk { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.icoon { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.kaart__soort { margin-top: var(--weune-ruimte-2); font-size: var(--weune-fs-klein); color: var(--weune-tekst-3); }
+.kaart__makelaar {
+  display: flex; align-items: center; gap: var(--weune-ruimte-3); min-height: 56px;
+  padding: 10px var(--weune-ruimte-4); border-top: 1px solid var(--weune-lijn);
+  font-size: var(--weune-fs-klein); color: var(--weune-tekst-2);
+}
+.kaart__makelaar img { height: 28px; width: auto; max-width: 112px; object-fit: contain; flex: none; }
 .kaart__makelaar span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.weergave { display: flex; gap: 16px; flex-wrap: wrap; }
-.paginering { display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 28px; }
+
+.labels { position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; flex-wrap: wrap; }
+.weune-label--onder_optie, .weune-label--verkocht_ov { background: var(--weune-onder-bod); color: var(--weune-wit); }
+
+/* ---- Paginering en lege staat ---------------------------------------- */
+.paginering { display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: var(--weune-ruimte-6); }
 .paginering button {
-  font: inherit; font-weight: 600; min-width: 40px; height: 40px; padding: 0 12px; cursor: pointer;
-  border: 1px solid var(--lijn); border-radius: 8px; background: var(--wit); color: var(--blauw);
+  min-width: 44px; min-height: 44px; padding: 0 14px; cursor: pointer; font-weight: 600;
+  border: 1px solid var(--weune-lijn); border-radius: var(--weune-radius-m); background: var(--weune-wit); color: var(--weune-blauw);
 }
-.paginering button:hover:not(:disabled) { border-color: var(--blauw-licht); }
-.paginering button.actief { background: var(--blauw); border-color: var(--blauw); color: var(--wit); }
-.paginering button:disabled { opacity: .4; cursor: default; }
-.paginering .puntjes { color: var(--grijs); padding: 0 2px; }
-.makelaar-logo { max-height: 56px; max-width: 200px; width: auto; object-fit: contain; margin: 4px 0 10px; }
-.verkoper { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--grijs); margin: 0 0 6px !important; }
-.kaart h2 { font-size: 1.05rem; margin: 0; }
-.plaats { margin: 2px 0 8px; color: var(--grijs); }
-.prijs { font-weight: 700; font-size: 1.15rem; margin: 0 0 6px; color: var(--tekst); }
-.prijs small { font-weight: 400; font-size: .8rem; color: var(--grijs); }
-.kenmerken { margin: 0 0 6px; font-size: .9rem; }
-.geen-foto { display: grid; place-items: center; height: 100%; min-height: 180px; color: var(--grijs); }
+.paginering button:hover:not(:disabled) { background: var(--weune-golf-licht); border-color: var(--weune-blauw); }
+.paginering button.actief { background: var(--weune-blauw); border-color: var(--weune-blauw); color: var(--weune-wit); }
+.paginering button:disabled { color: var(--weune-tekst-3); cursor: default; }
+.paginering .puntjes { color: var(--weune-tekst-3); padding: 0 4px; }
+.leeg { text-align: center; padding: var(--weune-ruimte-7) 0; color: var(--weune-tekst-2); display: grid; gap: var(--weune-ruimte-4); justify-items: center; }
 
-.labels { position: absolute; top: 10px; left: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
-.label { font-size: .75rem; font-weight: 700; padding: 3px 9px; border-radius: 4px; color: var(--wit); text-transform: uppercase; letter-spacing: .03em; }
-.label--nieuw { background: var(--accent); color: var(--blauw); }
-.label--onder_optie { background: var(--optie); }
-.label--verkocht_ov { background: var(--ovb); }
-.label--verkocht { background: var(--verkocht); }
-
-.leeg { text-align: center; padding: 40px 16px; color: var(--grijs); }
-.leeg button, .knop {
-  font: inherit; font-weight: 600; cursor: pointer; border: 0; border-radius: 8px;
-  background: var(--accent); color: var(--blauw); padding: 10px 18px; text-decoration: none; display: inline-block;
-}
-.leeg button:hover, .knop:hover { background: var(--accent-donker); }
-
-/* Detail */
-.detail { padding-top: 20px; padding-bottom: 48px; }
-.kruimel a { text-decoration: none; font-weight: 500; }
-.detail__raster { display: grid; gap: 28px; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-items: start; }
-.detail__foto { position: relative; border-radius: var(--radius); overflow: hidden; background: var(--blauw-zacht); box-shadow: var(--schaduw); }
-.detail__foto img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
-.detail__info { background: var(--wit); border-radius: var(--radius); padding: 22px; box-shadow: var(--schaduw); }
-.detail__info h1 { margin: 0; font-size: 1.6rem; }
-.prijs--groot { font-size: 1.5rem; margin: 6px 0 16px; }
-.tabel { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin: 0 0 20px; }
-.tabel dt { color: var(--grijs); }
+/* ---- Detailpagina ----------------------------------------------------- */
+.pagina { background: var(--weune-oppervlak); }
+.pagina .binnen { padding-block: var(--weune-ruimte-5) var(--weune-ruimte-8); }
+.terug { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-weight: 500; text-decoration: none; }
+.detail { display: grid; gap: var(--weune-ruimte-5); grid-template-columns: 1fr; margin-top: var(--weune-ruimte-2); align-items: start; }
+@media (min-width: 900px) { .detail { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); } }
+.detail__foto { position: relative; border-radius: var(--weune-radius-xl); overflow: hidden; background: var(--weune-golf-licht); aspect-ratio: 4 / 3; }
+.detail__foto img { width: 100%; height: 100%; object-fit: cover; }
+.paneel { background: var(--weune-wit); border-radius: var(--weune-radius-l); box-shadow: var(--weune-schaduw-kaart); padding: var(--weune-ruimte-5); min-width: 0; }
+.paneel h1 { font-size: var(--weune-fs-h1); color: var(--weune-nacht); }
+.paneel h2 { font-size: var(--weune-fs-h3); margin-bottom: var(--weune-ruimte-3); }
+.detail__plaats { margin-top: 4px; color: var(--weune-tekst-2); }
+.detail .weune-prijs { font-size: var(--weune-fs-h2); margin: var(--weune-ruimte-4) 0 var(--weune-ruimte-3); }
+.detail .kenmerken { font-size: 1rem; margin: 0 0 var(--weune-ruimte-4); }
+.tabel { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px var(--weune-ruimte-5); margin: 0; }
+.tabel dt { color: var(--weune-tekst-2); }
 .tabel dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
-.tabel--breed { grid-template-columns: minmax(140px, max-content) 1fr; }
-.detail__tekst { background: var(--wit); border-radius: var(--radius); padding: 22px; margin-top: 24px; box-shadow: var(--schaduw); }
-.detail__tekst h2 { margin-top: 0; font-size: 1.2rem; }
-.makelaarblok { border-top: 1px solid var(--lijn); margin-top: 20px; padding-top: 14px; font-size: .95rem; }
-.makelaarblok p { margin: 0 0 4px; }
-.makelaars { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
-.makelaars .makelaarblok { background: var(--wit); border: 0; border-radius: var(--radius); padding: 18px; box-shadow: var(--schaduw); margin: 0; }
-.makelaars h2 { margin: 0 0 8px; font-size: 1.1rem; }
+@media (max-width: 479px) { .tabel--breed { grid-template-columns: 1fr; gap: 0; } .tabel--breed dd { margin-bottom: 10px; } }
+.knoppen { display: flex; flex-wrap: wrap; gap: var(--weune-ruimte-3); margin-top: var(--weune-ruimte-5); }
+.weune-knop { text-decoration: none; }
+.weune-knop--primair:hover { color: var(--weune-wit); }
+.makelaarblok { border-top: 1px solid var(--weune-lijn); margin-top: var(--weune-ruimte-5); padding-top: var(--weune-ruimte-4); display: grid; gap: 6px; }
+.makelaarblok__label { font-size: var(--weune-fs-label); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--weune-tekst-3); }
+.makelaar-logo { max-height: 56px; max-width: 200px; width: auto; object-fit: contain; margin: 4px 0; }
+.makelaarblok__naam { font-weight: 600; color: var(--weune-nacht); }
+.tekstblok { margin-top: var(--weune-ruimte-5); }
+.tekstblok p { max-width: 70ch; }
+.tekstblok p + p { margin-top: var(--weune-ruimte-3); }
+.metadata { margin-top: var(--weune-ruimte-4); font-size: var(--weune-fs-klein); color: var(--weune-tekst-3); }
 
-/* Voet */
-.voet { background: var(--zand); color: var(--tekst); padding: 28px 0; margin-top: 24px; }
-.voet strong { color: var(--blauw); }
-.klein { font-size: .82rem; color: var(--grijs); }
-.voet .klein { color: var(--grijs); }
+/* ---- Makelaarsoverzicht ---------------------------------------------- */
+.makelaars { display: grid; gap: var(--weune-ruimte-4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); margin-top: var(--weune-ruimte-5); }
+.makelaars .paneel { display: grid; gap: 6px; align-content: start; }
+.makelaars h2 { font-size: var(--weune-fs-h4); margin: 0; }
+.pagina__intro { margin-top: var(--weune-ruimte-3); color: var(--weune-tekst-2); max-width: 65ch; }
+.pagina h1 { font-size: var(--weune-fs-h1); }
 
-@media (max-width: 800px) {
-  .detail__raster { grid-template-columns: 1fr; }
-  .tabel--breed { grid-template-columns: 1fr; }
-  .tabel--breed dd { margin-bottom: 6px; }
+/* ---- Voettekst -------------------------------------------------------- */
+.voet { position: relative; background: var(--weune-nacht); color: var(--weune-tekst-op-donker); }
+.voet__golf { display: block; width: 100%; height: 24px; color: var(--weune-golf); background: var(--weune-oppervlak); }
+.voet__binnen {
+  max-width: var(--weune-max-breedte); margin: 0 auto;
+  padding: var(--weune-ruimte-7) max(16px, env(safe-area-inset-right, 0px)) var(--weune-ruimte-6) max(16px, env(safe-area-inset-left, 0px));
+  display: grid; gap: var(--weune-ruimte-5); grid-template-columns: 1fr;
 }
+@media (min-width: 768px) { .voet__binnen { grid-template-columns: 2fr 1fr; padding-left: 32px; padding-right: 32px; } }
+.voet__merk { display: grid; gap: var(--weune-ruimte-3); max-width: 46ch; }
+.voet__merk img { height: 36px; width: auto; }
+.voet__links { display: grid; gap: 4px; align-content: start; }
+.voet__links a { color: var(--weune-wit); text-decoration: none; min-height: 32px; display: inline-flex; align-items: center; }
+.voet__links a:hover { color: var(--weune-golf); }
+.voet__klein { grid-column: 1 / -1; font-size: var(--weune-fs-klein); border-top: 1px solid color-mix(in srgb, var(--weune-tekst-op-donker) 20%, transparent); padding-top: var(--weune-ruimte-4); }

@@ -1,50 +1,62 @@
 {% extends "aanbod/base.html" %}
 {% load humanize %}
 {% block titel %}{{ woning.adres }}, {{ woning.woonplaats }} – {{ PORTAAL_NAAM }}{% endblock %}
-{% block beschrijving %}{{ woning.get_woningtype_display }} te koop in {{ woning.woonplaats }}{% if woning.vraagprijs %} voor € {{ woning.vraagprijs|intcomma }}{% endif %}.{% endblock %}
+{% block og_titel %}{{ woning.adres }}, {{ woning.woonplaats }}{% endblock %}
+{% block beschrijving %}{{ woning.get_woningtype_display }} te koop in {{ woning.woonplaats }}{% if woning.vraagprijs %} voor € {{ woning.vraagprijs|intcomma }}{% endif %}, aangeboden door {{ woning.makelaar.naam }}.{% endblock %}
 {% block inhoud %}
-<div class="detail">
-  <p class="kruimel"><a href="{{ BASIS }}">← Terug naar het aanbod</a></p>
-  <div class="detail__raster">
-    <div class="detail__foto">
-      {% if foto %}<img src="{{ foto }}" alt="Foto van {{ woning.adres }}">{% else %}<div class="geen-foto">Geen foto</div>{% endif %}
-      <div class="labels">
-        {% if woning.is_nieuw %}<span class="label label--nieuw">Nieuw</span>{% endif %}
-        {% if woning.status != "beschikbaar" %}<span class="label label--{{ woning.status }}">{{ woning.get_status_display }}</span>{% endif %}
+{% include "aanbod/includes/iconen.html" %}
+<div class="pagina">
+  <div class="binnen">
+    <a class="terug" href="{{ BASIS }}"><svg class="icoon" aria-hidden="true"><use href="#i-pijl-links"/></svg>Terug naar het aanbod</a>
+    <div class="detail">
+      <div class="detail__foto">
+        {% if foto %}<img src="{{ foto }}" alt="Foto van {{ woning.adres }} in {{ woning.woonplaats }}">{% endif %}
+        <div class="labels">
+          {% if woning.is_nieuw %}<span class="weune-label weune-label--nieuw">Nieuw</span>{% endif %}
+          <span class="weune-label weune-label--{{ woning.status }}">{{ woning.get_status_display }}</span>
+        </div>
+      </div>
+      <div class="paneel">
+        <h1>{{ woning.adres|default:"Adres onbekend" }}</h1>
+        <p class="detail__plaats">{{ woning.postcode }} {{ woning.woonplaats }}</p>
+        <p class="weune-prijs">{% if woning.vraagprijs %}€ {{ woning.vraagprijs|intcomma }} <span class="prijs-conditie">{{ woning.prijs_conditie }}</span>{% elif woning.status == "beschikbaar" %}Prijs op aanvraag{% else %}{{ woning.get_status_display }}{% endif %}</p>
+        <p class="kenmerken">
+          {% if woning.woonoppervlakte %}<span class="kenmerk" title="Woonoppervlak"><svg class="icoon" aria-hidden="true"><use href="#i-opp"/></svg>{{ woning.woonoppervlakte }} m²</span>{% endif %}
+          {% if woning.perceeloppervlakte %}<span class="kenmerk" title="Perceel"><svg class="icoon" aria-hidden="true"><use href="#i-perceel"/></svg>{{ woning.perceeloppervlakte|intcomma }} m²</span>{% endif %}
+          {% if woning.slaapkamers %}<span class="kenmerk" title="Slaapkamers"><svg class="icoon" aria-hidden="true"><use href="#i-bed"/></svg>{{ woning.slaapkamers }} slaapkamer{{ woning.slaapkamers|pluralize:"s" }}</span>{% endif %}
+          {% if woning.energielabel %}<span class="kenmerk" title="Energielabel"><svg class="icoon" aria-hidden="true"><use href="#i-label"/></svg>Label {{ woning.energielabel }}</span>{% endif %}
+        </p>
+        <dl class="tabel">
+          {% for label, waarde in hoofd %}<dt>{{ label }}</dt><dd>{{ waarde }}</dd>{% endfor %}
+        </dl>
+        <div class="knoppen">
+          <a class="weune-knop weune-knop--primair" href="{{ woning.url }}" target="_blank" rel="noopener">Bekijk bij {{ woning.makelaar.naam }}<svg class="icoon" aria-hidden="true"><use href="#i-extern"/></svg></a>
+        </div>
+        <div class="makelaarblok">
+          <p class="makelaarblok__label">Verkopend makelaar</p>
+          {% if logo %}<img class="makelaar-logo" src="{{ logo }}" alt="Logo {{ woning.makelaar.naam }}">{% endif %}
+          <p class="makelaarblok__naam">{{ woning.makelaar.naam }}</p>
+          {% if woning.makelaar.straat %}<p>{{ woning.makelaar.straat }}<br>{{ woning.makelaar.postcode }} {{ woning.makelaar.plaats }}</p>{% endif %}
+          {% if woning.makelaar.telefoon %}<p>Telefoon <a href="tel:{{ woning.makelaar.telefoon }}">{{ woning.makelaar.telefoon }}</a></p>{% endif %}
+        </div>
       </div>
     </div>
-    <div class="detail__info">
-      <h1>{{ woning.adres|default:"Adres onbekend" }}</h1>
-      <p class="plaats">{{ woning.postcode }} {{ woning.woonplaats }}</p>
-      <p class="prijs prijs--groot">{% if woning.vraagprijs %}€ {{ woning.vraagprijs|intcomma }} <small>{{ woning.prijs_conditie }}</small>{% elif woning.status == "beschikbaar" %}Prijs op aanvraag{% else %}{{ woning.get_status_display }}{% endif %}</p>
-      <dl class="tabel">
-        {% for label, waarde in hoofd %}<dt>{{ label }}</dt><dd>{{ waarde }}</dd>{% endfor %}
+    {% if woning.omschrijving %}
+    <section class="paneel tekstblok">
+      <h2>Omschrijving</h2>
+      <p>{{ woning.omschrijving|truncatechars:600 }}</p>
+      <p><a href="{{ woning.url }}" target="_blank" rel="noopener">Lees de volledige omschrijving bij {{ woning.makelaar.naam }}</a></p>
+    </section>
+    {% endif %}
+    {% if woning.kenmerken %}
+    <section class="paneel tekstblok">
+      <h2>Alle kenmerken</h2>
+      <dl class="tabel tabel--breed">
+        {% for label, waarde in woning.kenmerken.items %}<dt>{{ label|capfirst }}</dt><dd>{{ waarde }}</dd>{% endfor %}
       </dl>
-      <a class="knop" href="{{ woning.url }}" target="_blank" rel="noopener">Bekijk bij {{ woning.makelaar.naam }} ↗</a>
-      <div class="makelaarblok">
-        <p class="verkoper">Verkopend makelaar</p>
-        {% if logo %}<img class="makelaar-logo" src="{{ logo }}" alt="Logo {{ woning.makelaar.naam }}">{% endif %}
-        <p><strong>{{ woning.makelaar.naam }}</strong></p>
-        {% if woning.makelaar.straat %}<p>{{ woning.makelaar.straat }}<br>{{ woning.makelaar.postcode }} {{ woning.makelaar.plaats }}</p>{% endif %}
-        {% if woning.makelaar.telefoon %}<p>Tel. <a href="tel:{{ woning.makelaar.telefoon }}">{{ woning.makelaar.telefoon }}</a></p>{% endif %}
-      </div>
-    </div>
+    </section>
+    {% endif %}
+    <p class="metadata">Op Weune sinds {{ woning.eerst_gezien|date:"j F Y" }} · laatst gecontroleerd {{ woning.laatst_gecontroleerd|date:"j F Y"|default:"–" }}</p>
   </div>
-  {% if woning.omschrijving %}
-  <section class="detail__tekst">
-    <h2>Omschrijving</h2>
-    <p>{{ woning.omschrijving|truncatechars:400 }}</p>
-    <p><a href="{{ woning.url }}" target="_blank" rel="noopener">Lees de volledige omschrijving bij de makelaar ↗</a></p>
-  </section>
-  {% endif %}
-  {% if woning.kenmerken %}
-  <section class="detail__tekst">
-    <h2>Alle kenmerken</h2>
-    <dl class="tabel tabel--breed">
-      {% for label, waarde in woning.kenmerken.items %}<dt>{{ label|capfirst }}</dt><dd>{{ waarde }}</dd>{% endfor %}
-    </dl>
-  </section>
-  {% endif %}
-  <p class="klein">In ons overzicht sinds {{ woning.eerst_gezien|date:"j F Y" }}. Laatst gecontroleerd {{ woning.laatst_gecontroleerd|date:"j F Y"|default:"–" }}.</p>
 </div>
 {% endblock %}

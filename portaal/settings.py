@@ -100,9 +100,9 @@ MEDIA_ROOT = Path(env("PORTAAL_MEDIA_ROOT", BASE_DIR / "data" / "media"))
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # --- Portaal ---------------------------------------------------------------
-PORTAAL_NAAM = env("PORTAAL_NAAM", "Zeeuws Woningaanbod")
-# Eigen logo: pad binnen de static-map, bijv. "aanbod/logo.svg". Leeg = standaard beeldmerk + naam.
-PORTAAL_LOGO = env("PORTAAL_LOGO", "")
+PORTAAL_NAAM = env("PORTAAL_NAAM", "Weune")
+# Publiek adres van de site; gebruikt voor de deelafbeelding (og:image) en canonieke links.
+PORTAAL_SITE_URL = env("PORTAAL_SITE_URL", "https://www.weune.nl").rstrip("/")
 # Mogen zoekmachines de site indexeren? Standaard uit zolang het een test is.
 PORTAAL_INDEXEREN = env_bool("PORTAAL_INDEXEREN", False)
 # Aantal dagen dat een woning het label 'nieuw' krijgt.
