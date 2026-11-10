@@ -84,8 +84,12 @@ jobs:
         if: env.OPHALEN == 'true'
         run: python manage.py ophalen || echo "probleem=1" >> "$GITHUB_OUTPUT"
 
+      - name: Kaartlocaties aanvullen
+        # Ook in de stand 'alleen de site': woningen zonder coördinaten opzoeken bij PDOK
+        run: python manage.py geocoderen || echo "PDOK niet bereikbaar; volgende run opnieuw"
+
       - name: Database en foto's bewaren
-        if: always() && env.OPHALEN == 'true'
+        if: always()
         run: |
           cd databranch
           git config user.name "woningportaal-bot"

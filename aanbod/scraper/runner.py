@@ -16,6 +16,7 @@ from ..models import GenegeerdeUrl, Makelaar, OphaalRun, Woning, WoningStatusHis
 from .detail import parse_detail
 from .discovery import vind_woninglinks
 from .http import Fetcher, NietToegestaan
+from .geocode import geocodeer, te_geocoderen
 from .logo import haal_logo
 
 log = logging.getLogger("aanbod.scraper")
@@ -119,6 +120,11 @@ class Controle:
         for woning in te_controleren:
             self._controleer_bestaand(woning, woning.url in gevonden, run)
 
+        # Woningen die nog niet op de kaart staan (bijv. van vóór de kaartfunctie)
+        if not self.droog:
+            for woning in te_geocoderen(self.m.woningen.filter(online=True)):
+                geocodeer(woning)
+
     # ------------------------------------------------------------------
     def _haal(self, url):
         r = self.fetcher.get(url)
@@ -209,6 +215,8 @@ class Controle:
         self._vul(woning, res)
         woning.save()
         self._foto(woning, res.foto_url)
+        if not geocodeer(woning):
+            self._log(f"Locatie niet gevonden voor {woning} (niet op de kaart)")
         WoningStatusHistorie.objects.create(woning=woning, nieuwe_status=woning.status, nieuwe_prijs=woning.vraagprijs)
 
     def _controleer_bestaand(self, woning, in_overzicht, run):

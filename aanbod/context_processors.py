@@ -1,3 +1,5 @@
+import json
+
 from django.conf import settings
 
 
@@ -9,5 +11,6 @@ def portaal(request):
         "SITE_URL": settings.PORTAAL_SITE_URL,
         # Bij de statische export wordt dit het pad van de GitHub Pages-site
         "BASIS": getattr(request, "basis_url", "/"),
+        "BASIS_JSON": json.dumps(getattr(request, "basis_url", "/")),
         "STATISCH": getattr(request, "statisch", False),
     }

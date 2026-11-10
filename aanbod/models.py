@@ -161,6 +161,13 @@ class Woning(models.Model):
         help_text="Alle label/waarde-paren die op de detailpagina gevonden zijn.",
     )
 
+    lat = models.FloatField("breedtegraad", null=True, blank=True)
+    lon = models.FloatField("lengtegraad", null=True, blank=True)
+    geo_gecontroleerd = models.DateTimeField(
+        "locatie opgezocht", null=True, blank=True,
+        help_text="Wanneer de coördinaten voor het laatst bij PDOK zijn opgezocht.",
+    )
+
     foto = models.ImageField("hoofdfoto", upload_to="woningen/%Y/%m/", blank=True)
     foto_bron_url = models.URLField(max_length=1000, blank=True)
 

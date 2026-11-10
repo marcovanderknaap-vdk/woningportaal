@@ -60,6 +60,8 @@ def woning_json(request, w):
         "foto": _media_url(request, w.foto) or w.foto_bron_url,
         "url": f"{basis}woning/{w.pk}/",
         "makelaar": w.makelaar.naam,
+        "lat": round(w.lat, 6) if w.lat is not None else None,
+        "lon": round(w.lon, 6) if w.lon is not None else None,
         "logo": _media_url(request, w.makelaar.logo),
     }
 

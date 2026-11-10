@@ -205,3 +205,71 @@ select.gekozen { background-color: var(--weune-golf-licht); border-color: var(--
 .voet__links a { color: var(--weune-wit); text-decoration: none; min-height: 32px; display: inline-flex; align-items: center; }
 .voet__links a:hover { color: var(--weune-golf); }
 .voet__klein { grid-column: 1 / -1; font-size: var(--weune-fs-klein); border-top: 1px solid color-mix(in srgb, var(--weune-tekst-op-donker) 20%, transparent); padding-top: var(--weune-ruimte-4); }
+
+/* ---- Schakelaar Lijst | Kaart ---------------------------------------- */
+.schakelaar { display: inline-flex; background: var(--weune-wit); border: 1px solid var(--weune-lijn); border-radius: var(--weune-radius-m); padding: 3px; gap: 2px; }
+.schakelaar button {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 0 14px; cursor: pointer;
+  border: 0; border-radius: 9px; background: transparent; color: var(--weune-tekst-2); font-weight: 600;
+}
+.schakelaar button:hover { color: var(--weune-blauw); background: var(--weune-golf-licht); }
+.schakelaar button[aria-pressed="true"] { background: var(--weune-blauw); color: var(--weune-wit); }
+@media (max-width: 599px) {
+  .resultaten__kop { display: grid; grid-template-columns: 1fr auto; }
+  .resultaten__kop .weergave { grid-column: 1 / -1; }
+}
+
+/* ---- Kaartweergave ---------------------------------------------------- */
+.kaart-kaart {
+  height: clamp(420px, calc(100vh - 220px), 760px); border-radius: var(--weune-radius-l);
+  box-shadow: var(--weune-schaduw-kaart); background: var(--weune-golf-licht); z-index: 0;
+}
+.kaart-bron { margin-top: var(--weune-ruimte-2); font-size: var(--weune-fs-klein); color: var(--weune-tekst-3); }
+.leaflet-container { font-family: var(--weune-font-tekst); }
+.leaflet-container a.leaflet-popup-close-button { width: 32px; height: 32px; font-size: 22px; line-height: 30px; color: var(--weune-tekst-2); }
+
+/* Prijslabel per woning */
+.pin { background: none; border: 0; }
+.pin span {
+  display: inline-block; transform: translate(-50%, -100%); white-space: nowrap;
+  padding: 4px 9px; border-radius: 999px; border: 2px solid var(--weune-wit);
+  background: var(--weune-blauw); color: var(--weune-wit);
+  font: 600 13px/1.2 var(--weune-font-tekst); font-variant-numeric: tabular-nums;
+  box-shadow: var(--weune-schaduw-kaart); cursor: pointer;
+}
+.pin span::after {
+  content: ""; position: absolute; left: 50%; bottom: -7px; transform: translateX(-50%);
+  border: 5px solid transparent; border-top-color: var(--weune-blauw);
+}
+.pin span { position: relative; }
+.pin:hover span, .pin:focus span { background: var(--weune-nacht); }
+.pin:hover span::after { border-top-color: var(--weune-nacht); }
+.pin--nieuw span { background: var(--weune-zand); color: var(--weune-nacht); }
+.pin--nieuw span::after { border-top-color: var(--weune-zand); }
+.pin--onder_optie span, .pin--verkocht_ov span { background: var(--weune-onder-bod); }
+.pin--onder_optie span::after, .pin--verkocht_ov span::after { border-top-color: var(--weune-onder-bod); }
+.pin--verkocht span { background: var(--weune-verkocht); }
+.pin--verkocht span::after { border-top-color: var(--weune-verkocht); }
+.leaflet-marker-icon.pin:focus-visible { box-shadow: none; }
+.leaflet-marker-icon.pin:focus-visible span { box-shadow: var(--weune-focus); }
+
+/* Groep van woningen */
+.cluster {
+  display: grid; place-items: center; border-radius: 50%;
+  background: var(--weune-blauw); color: var(--weune-wit); border: 3px solid var(--weune-wit);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--weune-golf) 55%, transparent), var(--weune-schaduw-kaart);
+  font: 600 14px/1 var(--weune-font-kop);
+}
+.cluster span { display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; }
+.cluster:hover { background: var(--weune-nacht); }
+
+/* Pop-up met mini-woningkaart */
+.weune-popup .leaflet-popup-content-wrapper { border-radius: var(--weune-radius-l); padding: 0; overflow: hidden; box-shadow: var(--weune-schaduw-hover); }
+.weune-popup .leaflet-popup-content { margin: 0; width: 260px !important; }
+.pop { display: block; color: inherit; text-decoration: none; }
+.pop img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.pop__tekst { display: grid; gap: 2px; padding: 12px 14px 14px; }
+.pop__adres { font-family: var(--weune-font-kop); font-weight: 600; font-size: 1rem; color: var(--weune-nacht); }
+.pop__plaats { font-size: var(--weune-fs-klein); color: var(--weune-tekst-2); }
+.pop .pop__prijs { font-size: 1.25rem; margin-top: 4px; }
+.pop__meer { margin-top: 6px; color: var(--weune-link); font-weight: 600; font-size: var(--weune-fs-klein); }

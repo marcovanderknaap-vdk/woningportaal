@@ -14,6 +14,8 @@ De huisstijl (logo's, kleuren, lettertypes) staat in `CLAUDE.md` en `aanbod/stat
 | Publieke site met filters (woonplaats, prijsklasse, soort woning) | `/` |
 | Detailpagina per woning met link naar de makelaar | `/woning/<id>/` |
 | Overzicht aangesloten makelaars | `/makelaars/` |
+| Zoeken op kaart (schakelaar Lijst / Kaart, of `/?weergave=kaart`) | coördinaten via PDOK Locatieserver, kaart: PDOK BRT-achtergrondkaart + Leaflet (zelf gehost) |
+| Kaartlocaties aanvullen | `python manage.py geocoderen` (gebeurt ook automatisch bij elke run) |
 | Dagelijkse controle | `python manage.py ophalen` |
 | Statische export (GitHub Pages) | `python manage.py export_statisch` |
 

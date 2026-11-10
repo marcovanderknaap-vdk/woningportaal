@@ -39,7 +39,11 @@
   <div class="binnen">
     <div class="resultaten__kop">
       <p id="telling" aria-live="polite">{{ aantal }} woningen</p>
-      <div class="weergave">
+      <div class="schakelaar" role="group" aria-label="Weergave">
+        <button type="button" id="knop-lijst" aria-pressed="true"><svg class="icoon" aria-hidden="true"><use href="#i-raster"/></svg>Lijst</button>
+        <button type="button" id="knop-kaart" aria-pressed="false"><svg class="icoon" aria-hidden="true"><use href="#i-kaart"/></svg>Kaart</button>
+      </div>
+      <div class="weergave" id="lijst-opties">
         <label for="per">Per pagina
           <select id="per">
             {% for n in per_pagina %}<option value="{{ n }}"{% if n == 24 %} selected{% endif %}>{{ n }}</option>{% endfor %}
@@ -57,6 +61,10 @@
       </div>
     </div>
     <div class="raster" id="raster"></div>
+    <div class="kaart-weergave" id="kaart-weergave" hidden>
+      <div id="kaart" class="kaart-kaart" role="region" aria-label="Kaart met woningen"></div>
+      <p class="kaart-bron">Achtergrondkaart: © Kadaster (PDOK). Woningen zonder officieel huisnummer staan alleen in de lijst.</p>
+    </div>
     <div class="leeg" id="leeg" hidden>
       <p>Geen woningen gevonden met deze selectie. Probeer een andere woonplaats of prijsklasse.</p>
       <button type="button" class="weune-knop weune-knop--secundair" id="wis">Filters wissen</button>
@@ -81,6 +89,8 @@
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const icoon = (naam) => `<svg class="icoon" aria-hidden="true"><use href="#i-${naam}"/></svg>`;
   let pagina = 1;
+  let weergave = 'lijst';
+  const basis = {{ BASIS_JSON|safe }};
 
   // Filters, sortering en pagina uit de URL halen (zodat een selectie te delen is)
   const params = new URLSearchParams(location.search);
@@ -91,6 +101,7 @@
   if (params.has('sorteer')) sorteer.value = params.get('sorteer');
   if (params.has('per')) perSelect.value = params.get('per');
   if (params.has('pagina')) pagina = Math.max(1, parseInt(params.get('pagina'), 10) || 1);
+  if (params.get('weergave') === 'kaart') weergave = 'kaart';
 
   function prijs(w) {
     if (w.prijs) return `€ ${getal(w.prijs)}${w.conditie ? ` <span class="prijs-conditie">${esc(w.conditie)}</span>` : ''}`;
@@ -162,6 +173,24 @@
       'plaats': (a, b) => a.plaats.localeCompare(b.plaats) || a.adres.localeCompare(b.adres),
     }[s]);
 
+    const opKaart = weergave === 'kaart';
+    document.getElementById('kaart-weergave').hidden = !opKaart;
+    raster.hidden = opKaart;
+    nav.hidden = opKaart;
+    document.getElementById('lijst-opties').hidden = opKaart;
+    document.getElementById('knop-lijst').setAttribute('aria-pressed', String(!opKaart));
+    document.getElementById('knop-kaart').setAttribute('aria-pressed', String(opKaart));
+    if (opKaart) {
+      const metLocatie = lijst.filter(w => w.lat !== null && w.lon !== null);
+      telling.textContent = metLocatie.length === lijst.length
+        ? (lijst.length === 1 ? '1 woning op de kaart' : `${getal(lijst.length)} woningen op de kaart`)
+        : `${getal(metLocatie.length)} van ${getal(lijst.length)} woningen op de kaart`;
+      leeg.hidden = lijst.length > 0;
+      toonKaart(metLocatie);
+      schrijfUrl(f, sorteer.value, parseInt(perSelect.value, 10));
+      return;
+    }
+
     const per = parseInt(perSelect.value, 10);
     const totaal = Math.max(1, Math.ceil(lijst.length / per));
     pagina = Math.min(pagina, totaal);
@@ -173,12 +202,75 @@
       : `${getal(lijst.length)} woningen · ${start + 1}–${Math.min(start + per, lijst.length)} getoond`;
     leeg.hidden = lijst.length > 0;
 
+    schrijfUrl(f, s, per);
+  }
+
+  function schrijfUrl(f, s, per) {
     const p = new URLSearchParams();
     for (const [k, v] of Object.entries(f)) if (v) p.set(k, v);
     if (s !== 'nieuw') p.set('sorteer', s);
     if (per !== 24) p.set('per', per);
-    if (pagina > 1) p.set('pagina', pagina);
+    if (pagina > 1 && weergave === 'lijst') p.set('pagina', pagina);
+    if (weergave === 'kaart') p.set('weergave', 'kaart');
     history.replaceState(null, '', p.toString() ? '?' + p : location.pathname);
+  }
+
+  // ---- Kaart (Leaflet + PDOK-achtergrondkaart; pas geladen als de kaart wordt geopend) ----
+  let lkaart = null, groep = null, laden = null, vorigeSleutel = '';
+  function laadScript(src) {
+    return new Promise((ok, fout) => { const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = fout; document.head.appendChild(el); });
+  }
+  function laadCss(href) { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = href; document.head.appendChild(l); }
+  function laadKaart() {
+    if (!laden) {
+      laadCss(basis + 'static/kaart/leaflet.css');
+      laadCss(basis + 'static/kaart/MarkerCluster.css');
+      laden = laadScript(basis + 'static/kaart/leaflet.js').then(() => laadScript(basis + 'static/kaart/leaflet.markercluster.js'));
+    }
+    return laden;
+  }
+  const KORT = { beschikbaar: 'Op aanvraag', onder_optie: 'Onder optie', verkocht_ov: 'Verkocht o.v.', verkocht: 'Verkocht' };
+  const kortePrijs = w => !w.prijs ? (KORT[w.status] || w.statusLabel)
+    : w.prijs >= 1e6 ? '€ ' + (w.prijs / 1e6).toLocaleString('nl-NL', { maximumFractionDigits: 2 }) + ' mln'
+    : '€ ' + Math.round(w.prijs / 1000) + 'k';
+  function popup(w) {
+    return `<a class="pop" href="${esc(w.url)}">
+      ${w.foto ? `<img src="${esc(w.foto)}" alt="" loading="lazy">` : ''}
+      <span class="pop__tekst"><strong class="pop__adres">${esc(w.adres || 'Adres onbekend')}</strong>
+      <span class="pop__plaats">${esc([w.postcode, w.plaats].filter(Boolean).join(' '))}</span>
+      <span class="weune-prijs pop__prijs">${prijs(w)}</span>
+      <span class="pop__meer">Bekijk woning ›</span></span></a>`;
+  }
+  function toonKaart(lijst) {
+    laadKaart().then(() => {
+      const L = window.L;
+      if (!lkaart) {
+        lkaart = L.map('kaart', { scrollWheelZoom: true, zoomControl: true }).setView([51.5, 3.85], 9);
+        L.tileLayer('https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/pastel/EPSG:3857/{z}/{x}/{y}.png', {
+          minZoom: 7, maxZoom: 19, attribution: '© <a href="https://www.kadaster.nl">Kadaster</a>',
+        }).addTo(lkaart);
+        groep = L.markerClusterGroup({
+          showCoverageOnHover: false, maxClusterRadius: 50, spiderfyOnMaxZoom: true,
+          iconCreateFunction: c => {
+            const n = c.getChildCount();
+            const maat = n < 10 ? 40 : n < 50 ? 48 : 56;
+            return L.divIcon({ html: `<span>${n}</span>`, className: 'cluster', iconSize: [maat, maat] });
+          },
+        });
+        lkaart.addLayer(groep);
+      }
+      lkaart.invalidateSize();
+      const sleutel = lijst.map(w => w.id).join(',');
+      if (sleutel === vorigeSleutel) return;
+      vorigeSleutel = sleutel;
+      groep.clearLayers();
+      const markers = lijst.map(w => L.marker([w.lat, w.lon], {
+        icon: L.divIcon({ className: 'pin pin--' + w.status + (w.nieuw ? ' pin--nieuw' : ''), html: `<span>${esc(kortePrijs(w))}</span>`, iconSize: null }),
+        title: `${w.adres}, ${w.plaats}`, keyboard: true, riseOnHover: true,
+      }).bindPopup(popup(w), { maxWidth: 280, minWidth: 240, className: 'weune-popup' }));
+      groep.addLayers(markers);
+      if (markers.length) lkaart.fitBounds(groep.getBounds(), { padding: [32, 32], maxZoom: 15 });
+    }).catch(() => { telling.textContent = 'De kaart kon niet worden geladen. Probeer het later opnieuw of gebruik de lijst.'; });
   }
 
   // Bij een andere selectie altijd terug naar pagina 1
@@ -195,6 +287,8 @@
     document.getElementById('resultaten').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
   });
   document.getElementById('wis').addEventListener('click', () => { form.reset(); opnieuw(); });
+  document.getElementById('knop-lijst').addEventListener('click', () => { weergave = 'lijst'; toon(); });
+  document.getElementById('knop-kaart').addEventListener('click', () => { weergave = 'kaart'; toon(); });
   toon();
 })();
 </script>

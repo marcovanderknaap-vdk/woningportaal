@@ -111,6 +111,24 @@ class TelefoonTest(TestCase):
             self.assertEqual(v.telefoon_link, verwacht, invoer)
 
 
+class GeocodeTest(TestCase):
+    def test_alleen_exacte_treffer_in_dezelfde_plaats(self):
+        from unittest import mock
+
+        from .scraper import geocode
+
+        antwoord = {"response": {"docs": [
+            {"centroide_ll": "POINT(4.0 51.0)", "woonplaatsnaam": "Vlissingen", "postcode": "4381AA",
+             "straatnaam": "Kerkstraat", "huisnummer": 1},
+            {"centroide_ll": "POINT(3.61 51.50)", "woonplaatsnaam": "Middelburg", "postcode": "4331EN",
+             "straatnaam": "Spanjaardstraat", "huisnummer": 13},
+        ]}}
+        sessie = mock.Mock()
+        sessie.get.return_value.json.return_value = antwoord
+        self.assertEqual(geocode.zoek("Spanjaardstraat 13", "", "Middelburg", sessie), (51.50, 3.61, "4331 EN"))
+        self.assertIsNone(geocode.zoek("Spanjaardstraat 15", "", "Middelburg", sessie))
+
+
 class CategorieTest(TestCase):
     def test_categorie(self):
         from .views import categorie
