@@ -46,6 +46,9 @@ button, select, input { font: inherit; }
   color: var(--weune-tekst); text-decoration: none; font-weight: 500; border-radius: var(--weune-radius-s);
 }
 .menu a:hover { color: var(--weune-blauw); background: var(--weune-golf-licht); }
+.menu a { white-space: nowrap; }
+.menu__kort { display: none; }
+@media (max-width: 479px) { .menu__lang { display: none; } .menu__kort { display: inline; } }
 @media (max-width: 400px) { .menu a { padding: 0 8px; font-size: var(--weune-fs-klein); } }
 .menu a[aria-current="page"] { color: var(--weune-blauw); font-weight: 600; box-shadow: inset 0 -3px 0 var(--weune-blauw); border-radius: 0; }
 
@@ -310,3 +313,32 @@ select.gekozen { background-color: var(--weune-golf-licht); border-color: var(--
 .pop__plaats { font-size: var(--weune-fs-klein); color: var(--weune-tekst-2); }
 .pop .pop__prijs { font-size: 1.25rem; margin-top: 4px; }
 .pop__meer { margin-top: 6px; color: var(--weune-link); font-weight: 600; font-size: var(--weune-fs-klein); }
+
+/* ---- Over Weune ------------------------------------------------------- */
+.over-hero { background: linear-gradient(180deg, var(--weune-golf-licht) 0%, var(--weune-oppervlak) 100%); }
+.over-hero .binnen { padding-block: var(--weune-ruimte-7) var(--weune-ruimte-6); }
+.over-hero__label { font-size: var(--weune-fs-label); font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--weune-blauw); }
+.over-hero h1 { margin-top: var(--weune-ruimte-2); font-size: var(--weune-fs-display); font-weight: 700; color: var(--weune-nacht); max-width: 16ch; }
+.over-hero__intro { margin-top: var(--weune-ruimte-4); font-size: 1.125rem; color: var(--weune-tekst-2); max-width: 60ch; }
+.over .binnen { padding-top: 0; }
+.over-cijfers {
+  list-style: none; padding: 0; margin: 0 0 var(--weune-ruimte-6);
+  display: grid; gap: var(--weune-ruimte-3); grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.over-cijfers li { background: var(--weune-wit); border-radius: var(--weune-radius-l); box-shadow: var(--weune-schaduw-kaart); padding: var(--weune-ruimte-4); display: grid; gap: 2px; }
+.over-cijfers strong { font-family: var(--weune-font-kop); font-weight: 600; font-size: var(--weune-fs-h1); color: var(--weune-blauw); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.over-cijfers span { font-size: var(--weune-fs-klein); color: var(--weune-tekst-2); }
+@media (max-width: 559px) { .over-cijfers { grid-template-columns: 1fr; } .over-cijfers li { grid-template-columns: auto 1fr; align-items: baseline; gap: 12px; } }
+.over-tekst { display: grid; gap: var(--weune-ruimte-6); max-width: 70ch; }
+.over-tekst h2 { font-size: var(--weune-fs-h2); margin-bottom: var(--weune-ruimte-3); }
+.over-tekst p + p { margin-top: var(--weune-ruimte-3); }
+.over-stappen { margin: 0; padding: 0; list-style: none; counter-reset: stap; display: grid; gap: var(--weune-ruimte-4); }
+.over-stappen li { counter-increment: stap; display: grid; grid-template-columns: 40px 1fr; gap: var(--weune-ruimte-3); align-items: start; }
+.over-stappen li::before {
+  content: counter(stap); width: 40px; height: 40px; border-radius: var(--weune-radius-m);
+  display: grid; place-items: center; background: var(--weune-blauw); color: var(--weune-wit);
+  font-family: var(--weune-font-kop); font-weight: 600;
+}
+.over-stappen strong { color: var(--weune-nacht); }
+.over-payoff { margin-top: var(--weune-ruimte-5) !important; font-family: var(--weune-font-kop); font-weight: 600; font-size: var(--weune-fs-h3); color: var(--weune-blauw); }
+.over-acties { display: flex; flex-wrap: wrap; gap: var(--weune-ruimte-3); margin-top: var(--weune-ruimte-6); }

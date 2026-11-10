@@ -1,0 +1,57 @@
+{% extends "aanbod/base.html" %}
+{% block titel %}Over Weune – {{ PORTAAL_NAAM }}{% endblock %}
+{% block og_titel %}Over Weune{% endblock %}
+{% block beschrijving %}Weune is het Zeeuwse woningportaal: het aanbod van de aangesloten NVM-makelaars in Zeeland op één plek, elke dag bijgewerkt.{% endblock %}
+{% block inhoud %}
+<section class="over-hero">
+  <div class="binnen">
+    <p class="over-hero__label">Over Weune</p>
+    <h1>Weune is Zeeuws voor wonen</h1>
+    <p class="over-hero__intro">En wonen doe je hier goed. Tussen de dijken en de duinen, in een vestingstadje of een dorp met een kerktoren aan de horizon. Weune helpt je het huis te vinden dat daarbij hoort.</p>
+  </div>
+</section>
+
+<div class="pagina over">
+  <div class="binnen">
+    <ul class="over-cijfers" aria-label="Weune in cijfers">
+      <li><strong>{{ aantal_woningen }}</strong><span>woningen te koop</span></li>
+      <li><strong>{{ aantal_plaatsen }}</strong><span>Zeeuwse plaatsen</span></li>
+      <li><strong>{{ aantal_makelaars }}</strong><span>aangesloten NVM-makelaars</span></li>
+    </ul>
+
+    <div class="over-tekst">
+      <section>
+        <h2>Al het Zeeuwse aanbod op één plek</h2>
+        <p>Wie in Zeeland een huis zoekt, klikt zich al snel een slag in de rondte. Elke makelaar heeft zijn eigen website, met zijn eigen zoekfilters en zijn eigen manier van tonen. Weune zet het aanbod van de aangesloten makelaars bij elkaar. Van een appartement aan de boulevard in Vlissingen tot een boerderij in Zeeuws-Vlaanderen en een rijtjeshuis in Goes: je zoekt het op één plek, op de manier die jou het beste uitkomt.</p>
+        <p>Filter op woonplaats, prijs of soort woning, of zoek op de kaart. Zie je iets moois? Dan ga je met één klik naar de makelaar die de woning verkoopt.</p>
+      </section>
+
+      <section>
+        <h2>Alleen van NVM-makelaars</h2>
+        <p>Alle woningen op Weune komen van Zeeuwse makelaars die lid zijn van de NVM. Dat zijn vakmensen die de regio kennen en zich houden aan de gedragsregels van hun beroepsvereniging. Je weet dus wie er achter een woning staat, en bij wie je terechtkunt met je vragen.</p>
+        <p>Weune verkoopt zelf geen huizen en is geen makelaar. Wij brengen het aanbod samen; de makelaar helpt je verder met bezichtigingen, vragen en een bod.</p>
+      </section>
+
+      <section>
+        <h2>Zo werkt het</h2>
+        <ol class="over-stappen">
+          <li><p><strong>Elke ochtend bijgewerkt.</strong> Weune kijkt dagelijks bij alle aangesloten makelaars wat er nieuw is en wat er veranderd is.</p></li>
+          <li><p><strong>Nieuw valt op.</strong> Woningen die er de afgelopen twee weken bij kwamen, herken je aan het label Nieuw. Gaat een woning onder optie of wordt hij verkocht, dan zie je dat ook meteen.</p></li>
+          <li><p><strong>Altijd naar de bron.</strong> Voor alle foto's, de volledige omschrijving en een afspraak ga je naar de website van de makelaar. Daar staat altijd de meest actuele informatie.</p></li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Van hier, voor hier</h2>
+        <p>Weune is gemaakt in Zeeland, met oog voor wat deze provincie bijzonder maakt: de eilanden, de rust, het licht en de nuchterheid van de mensen. Of je hier al je hele leven woont, terugkeert naar je roots of vanuit België of de Randstad de stap naar Zeeland zet, je bent welkom.</p>
+        <p class="over-payoff">Wonen in Zeeland. Hier wil ik weune!</p>
+      </section>
+    </div>
+
+    <div class="over-acties">
+      <a class="weune-knop weune-knop--primair" href="{{ BASIS }}">Bekijk het aanbod</a>
+      <a class="weune-knop weune-knop--secundair" href="{{ BASIS }}makelaars/">Aangesloten makelaars</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

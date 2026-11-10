@@ -165,6 +165,18 @@ class UtmTest(TestCase):
         self.assertEqual(uit.count("utm_source"), 1)
 
 
+class PaginaTest(TestCase):
+    def test_paginas_laden(self):
+        m = Makelaar.objects.create(naam="Test", aanbod_url="https://m.nl/")
+        w = Woning.objects.create(makelaar=m, url="https://m.nl/1", adres="Markt 1", woonplaats="Goes", vraagprijs=300000)
+        for url, actief in [("/", "Koopwoningen"), ("/makelaars/", "Makelaars"), ("/over-weune/", "Over Weune"),
+                            (f"/woning/{w.pk}/", "Koopwoningen")]:
+            r = self.client.get(url)
+            self.assertEqual(r.status_code, 200, url)
+            self.assertContains(r, f'aria-current="page"><span class="menu__lang">{actief}' if actief != "Makelaars"
+                                else 'aria-current="page">Makelaars')
+
+
 class CategorieTest(TestCase):
     def test_categorie(self):
         from .views import categorie

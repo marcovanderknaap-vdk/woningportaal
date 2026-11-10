@@ -36,6 +36,7 @@ class Command(BaseCommand):
 
         schrijf("", views.index)
         schrijf("makelaars/", views.makelaars)
+        schrijf("over-weune/", views.over)
         woningen = list(Woning.objects.zichtbaar())
         for w in woningen:
             schrijf(f"woning/{w.pk}/", views.detail, w.pk)

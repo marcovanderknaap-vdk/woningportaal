@@ -29,8 +29,9 @@
         <img class="logo__beeldmerk" src="{{ BASIS }}static/brand/weune-beeldmerk-blauw_20261110.svg" alt="{{ PORTAAL_NAAM }}" width="36" height="36">
       </a>
       <nav class="menu" aria-label="Hoofdmenu">
-        <a href="{{ BASIS }}"{% if menu_actief == "koopwoningen" %} aria-current="page"{% endif %}>Koopwoningen</a>
+        <a href="{{ BASIS }}"{% if menu_actief == "koopwoningen" %} aria-current="page"{% endif %}><span class="menu__lang">Koopwoningen</span><span class="menu__kort">Aanbod</span></a>
         <a href="{{ BASIS }}makelaars/"{% if menu_actief == "makelaars" %} aria-current="page"{% endif %}>Makelaars</a>
+        <a href="{{ BASIS }}over-weune/"{% if menu_actief == "over" %} aria-current="page"{% endif %}><span class="menu__lang">Over Weune</span><span class="menu__kort">Over</span></a>
       </nav>
     </div>
   </header>
@@ -46,6 +47,7 @@
       <nav class="voet__links" aria-label="Voettekst">
         <a href="{{ BASIS }}">Koopwoningen</a>
         <a href="{{ BASIS }}makelaars/">Aangesloten makelaars</a>
+        <a href="{{ BASIS }}over-weune/">Over Weune</a>
       </nav>
       <p class="voet__klein">De informatie komt van de websites van de makelaars. Aan de getoonde gegevens kun je geen rechten ontlenen; kijk voor de actuele stand altijd bij de makelaar.</p>
     </div>

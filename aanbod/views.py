@@ -131,6 +131,20 @@ def makelaars(request):
     return render(request, "aanbod/makelaars.html", {"makelaars": lijst, "menu_actief": "makelaars"})
 
 
+def over(request):
+    zichtbaar = Woning.objects.zichtbaar()
+    return render(
+        request,
+        "aanbod/over.html",
+        {
+            "menu_actief": "over",
+            "aantal_makelaars": Makelaar.objects.filter(actief=True).count(),
+            "aantal_woningen": zichtbaar.count(),
+            "aantal_plaatsen": zichtbaar.exclude(woonplaats="").values("woonplaats").distinct().count(),
+        },
+    )
+
+
 def robots_txt(request):
     if settings.PORTAAL_INDEXEREN:
         regels = ["User-agent: *", "Disallow: /beheer/"]
