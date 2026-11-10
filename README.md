@@ -158,7 +158,19 @@ Afgesproken tijdens de testfase (november 2026). Tot de verhuizing draait de con
 - [ ] **Indexeren aanzetten** voor de publieke site (`PORTAAL_INDEXEREN=true`), niet voor de testomgeving.
 - [ ] **E-maildienst** (bijv. Brevo of Mailgun EU) voor storingsmails en later de zoekprofielen.
 
-Daarna: **zoekprofielen met e-mailmeldingen** (inschrijven met bevestigingsmail, afmeldlink, privacyverklaring),
-die profiteren van de snelle ronde per uur.
+Daarna, afhankelijk van de uitkomst van het makelaarsoverleg (november 2026):
+
+- [ ] **Zoekprofielen met e-mailmeldingen:** inschrijven met bevestigingsmail, afmeldlink in elke mail,
+  privacyverklaring; profiteert van de snelle ronde per uur.
+- [ ] **Meerdere foto's, plattegronden en volledige tekst, per makelaar met toestemming:**
+  - instelling per makelaar in de backend: "één foto + ingekorte tekst" of "tot 8 foto's + plattegronden +
+    volledige tekst" (standaard), inclusief vastlegging wanneer en door wie toestemming is gegeven;
+  - toestemming ingetrokken → extra foto's en volledige tekst direct verwijderen;
+  - alleen op de eigen server (± 1–1,5 MB per woning, 4–6 GB bij 40 makelaars; CPX22 aanbevolen),
+    foto's als WebP in twee formaten (miniatuur en groot), lazy loading en een fotogalerij;
+  - foto's ophalen per site testen (Realworks-sites eerst; galerijen via JavaScript vragen maatwerk),
+    gewijzigde of verwijderde foto's bijhouden;
+  - volledige tekst met alinea's en opsommingen bewaren; keuze maken over `canonical` (dubbele inhoud);
+  - deelnamevoorwaarden: makelaar verklaart de foto's (ook van fotografen) aan Weune te mogen doorgeven.
 
 Nog aan te leveren: contactadres voor de pagina "Over Weune" (bijv. voor makelaars die willen aansluiten).
