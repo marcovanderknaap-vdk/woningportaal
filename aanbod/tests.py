@@ -152,6 +152,19 @@ class VestigingTest(TestCase):
         self.assertEqual(bepaal(w, ""), (self.goes, "afstand"))
 
 
+class UtmTest(TestCase):
+    def test_via_weune(self):
+        from .templatetags.weune import via_weune
+        self.assertEqual(
+            via_weune("https://m.nl/woning/a-1/", "woningpagina"),
+            "https://m.nl/woning/a-1/?utm_source=weune&utm_medium=referral&utm_campaign=woningaanbod&utm_content=woningpagina",
+        )
+        uit = via_weune("https://m.nl/w?id=5&utm_source=oud#fotos", "omschrijving")
+        self.assertTrue(uit.startswith("https://m.nl/w?id=5&utm_source=weune&"))
+        self.assertTrue(uit.endswith("utm_content=omschrijving#fotos"))
+        self.assertEqual(uit.count("utm_source"), 1)
+
+
 class CategorieTest(TestCase):
     def test_categorie(self):
         from .views import categorie

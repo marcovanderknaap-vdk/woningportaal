@@ -1,5 +1,5 @@
 {% extends "aanbod/base.html" %}
-{% load humanize %}
+{% load humanize weune %}
 {% block titel %}{{ woning.adres }}, {{ woning.woonplaats }} – {{ PORTAAL_NAAM }}{% endblock %}
 {% block og_titel %}{{ woning.adres }}, {{ woning.woonplaats }}{% endblock %}
 {% block beschrijving %}{{ woning.get_woningtype_display }} te koop in {{ woning.woonplaats }}{% if woning.vraagprijs %} voor € {{ woning.vraagprijs|intcomma }}{% endif %}, aangeboden door {{ woning.makelaar.naam }}.{% endblock %}
@@ -30,7 +30,7 @@
           {% for label, waarde in hoofd %}<dt>{{ label }}</dt><dd>{{ waarde }}</dd>{% endfor %}
         </dl>
         <div class="knoppen">
-          <a class="weune-knop weune-knop--primair" href="{{ woning.url }}" target="_blank" rel="noopener" data-extern>Bekijk bij {{ woning.makelaar.naam }}<svg class="icoon" aria-hidden="true"><use href="#i-extern"/></svg></a>
+          <a class="weune-knop weune-knop--primair" href="{{ woning.url|via_weune:'woningpagina' }}" target="_blank" rel="noopener" data-extern>Bekijk bij {{ woning.makelaar.naam }}<svg class="icoon" aria-hidden="true"><use href="#i-extern"/></svg></a>
         </div>
         <div class="makelaarblok">
           <p class="makelaarblok__label">Verkopend makelaar</p>
@@ -65,7 +65,7 @@
     <section class="paneel tekstblok">
       <h2>Omschrijving</h2>
       <p>{{ woning.omschrijving|truncatechars:600 }}</p>
-      <p><a href="{{ woning.url }}" target="_blank" rel="noopener" data-extern>Lees de volledige omschrijving bij {{ woning.makelaar.naam }}</a></p>
+      <p><a href="{{ woning.url|via_weune:'omschrijving' }}" target="_blank" rel="noopener" data-extern>Lees de volledige omschrijving bij {{ woning.makelaar.naam }}</a></p>
     </section>
     {% endif %}
     {% if woning.kenmerken %}

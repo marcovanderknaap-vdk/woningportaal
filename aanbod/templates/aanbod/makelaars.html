@@ -1,4 +1,5 @@
 {% extends "aanbod/base.html" %}
+{% load weune %}
 {% block titel %}Aangesloten makelaars – {{ PORTAAL_NAAM }}{% endblock %}
 {% block og_titel %}Aangesloten makelaars{% endblock %}
 {% block inhoud %}
@@ -27,7 +28,7 @@
         </div>
         <footer class="makelaarkaart__voet">
           <p><strong>{{ m.aantal }}</strong> woning{{ m.aantal|pluralize:"en" }} op Weune</p>
-          {% if m.website %}<a href="{{ m.website }}" target="_blank" rel="noopener" data-extern aria-label="Naar de website van {{ m.naam }}">Naar de website<svg class="icoon" aria-hidden="true"><use href="#i-extern"/></svg></a>{% endif %}
+          {% if m.website %}<a href="{{ m.website|via_weune:'makelaarsoverzicht' }}" target="_blank" rel="noopener" data-extern aria-label="Naar de website van {{ m.naam }}">Naar de website<svg class="icoon" aria-hidden="true"><use href="#i-extern"/></svg></a>{% endif %}
         </footer>
       </article>
       {% endfor %}

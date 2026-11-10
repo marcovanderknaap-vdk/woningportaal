@@ -123,3 +123,8 @@ De testomgeving gebruikt de openbare kaarttegels van OpenStreetMap. Die zijn bed
 Zet voor de publieke site met veel bezoekers een eigen tegeldienst in, bijvoorbeeld MapTiler (EU, gratis
 instapniveau) of zelf gehoste tegels, via `KAART_TEGELS_URL` en `KAART_ATTRIBUTIE`. Er hoeft dan niets
 aan de code te veranderen.
+
+### Bezoekers meten bij de makelaars
+Alle links naar makelaarssites krijgen UTM-parameters (`utm_source=weune`, `utm_medium=referral`,
+`utm_campaign=woningaanbod`, `utm_content=woningpagina|omschrijving|makelaarsoverzicht`). Makelaars zien zo
+in Google Analytics of een vergelijkbaar pakket hoeveel bezoekers Weune oplevert. Zie de templatefilter `via_weune`.
