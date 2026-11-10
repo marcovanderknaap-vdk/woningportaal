@@ -68,12 +68,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "portaal.wsgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": Path(env("PORTAAL_DB_PATH", BASE_DIR / "data" / "portaal.sqlite3")),
+# Database: PostgreSQL via DATABASE_URL (productie/test-server), anders SQLite (GitHub, lokaal).
+#   DATABASE_URL=postgres://gebruiker:wachtwoord@localhost:5432/portaal
+if env("DATABASE_URL"):
+    import dj_database_url
+
+    DATABASES = {"default": dj_database_url.parse(env("DATABASE_URL"), conn_max_age=600, conn_health_checks=True)}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": Path(env("PORTAAL_DB_PATH", BASE_DIR / "data" / "portaal.sqlite3")),
+        }
     }
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},

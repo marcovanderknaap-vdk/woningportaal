@@ -87,6 +87,28 @@ de website, de backend en de dagelijkse taak (`cron`: `python manage.py ophalen`
 `DJANGO_DEBUG=false`, `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS` en de e-mailinstellingen.
 SQLite volstaat voor duizenden woningen; PostgreSQL kan later.
 
+## Database: SQLite of PostgreSQL
+Zonder instelling gebruikt de applicatie SQLite (één bestand; zo werkt de GitHub-testomgeving).
+Op de server wordt PostgreSQL gebruikt door `DATABASE_URL` te zetten:
+
+```bash
+DATABASE_URL=postgres://gebruiker:wachtwoord@localhost:5432/portaal
+```
+
+De bestaande gegevens overzetten van SQLite naar PostgreSQL (getest met de echte database):
+
+```bash
+# 1. exporteren uit SQLite (zonder DATABASE_URL)
+python manage.py dumpdata --natural-foreign --natural-primary --exclude contenttypes \
+  --exclude auth.permission --exclude sessions --exclude admin.logentry -o export.json
+# 2. inlezen in PostgreSQL
+export DATABASE_URL=postgres://...
+python manage.py migrate
+python manage.py loaddata export.json
+```
+Kopieer daarnaast de map met foto's en logo's (`data/media`). Bij elke codewijziging draaien de tests
+op GitHub automatisch op zowel SQLite als PostgreSQL (`.github/workflows/tests.yml`).
+
 ## Instellingen (omgevingsvariabelen)
 `PORTAAL_NAAM`, `NIEUW_DAGEN` (14), `VERKOCHT_ZICHTBAAR_DAGEN` (30), `VERKOCHT_CONTROLE_DAGEN` (30),
 `SCRAPER_MIN_DELAY` (2 s), `FOTO_MAX_BREEDTE` (1200 px), `RAPPORT_EMAIL`, `EMAIL_*`,
