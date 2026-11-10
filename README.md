@@ -14,7 +14,7 @@ De huisstijl (logo's, kleuren, lettertypes) staat in `CLAUDE.md` en `aanbod/stat
 | Publieke site met filters (woonplaats, prijsklasse, soort woning) | `/` |
 | Detailpagina per woning met link naar de makelaar | `/woning/<id>/` |
 | Overzicht aangesloten makelaars | `/makelaars/` |
-| Zoeken op kaart (schakelaar Lijst / Kaart, of `/?weergave=kaart`) | coördinaten via PDOK Locatieserver, kaart: PDOK BRT-achtergrondkaart + Leaflet (zelf gehost) |
+| Zoeken op kaart (schakelaar Lijst / Kaart, of `/?weergave=kaart`) | coördinaten via PDOK Locatieserver, kaart: OpenStreetMap-tegels (ook België) + Leaflet (zelf gehost); tegeldienst instelbaar via `KAART_TEGELS_URL` |
 | Kaartlocaties aanvullen | `python manage.py geocoderen` (gebeurt ook automatisch bij elke run) |
 | Dagelijkse controle | `python manage.py ophalen` |
 | Statische export (GitHub Pages) | `python manage.py export_statisch` |
@@ -116,4 +116,10 @@ op GitHub automatisch op zowel SQLite als PostgreSQL (`.github/workflows/tests.y
 ## Instellingen (omgevingsvariabelen)
 `PORTAAL_NAAM` (Weune), `PORTAAL_SITE_URL` (https://www.weune.nl), `NIEUW_DAGEN` (14), `VERKOCHT_ZICHTBAAR_DAGEN` (30), `VERKOCHT_CONTROLE_DAGEN` (30),
 `SCRAPER_MIN_DELAY` (2 s), `FOTO_MAX_BREEDTE` (1200 px), `RAPPORT_EMAIL`, `EMAIL_*`,
-`PORTAAL_INDEXEREN` (uit: elke pagina krijgt `noindex` en robots.txt blokkeert alles; zet op `true` bij de livegang).
+`KAART_TEGELS_URL` en `KAART_ATTRIBUTIE` (achtergrondkaart; zie hieronder), `PORTAAL_INDEXEREN` (uit: elke pagina krijgt `noindex` en robots.txt blokkeert alles; zet op `true` bij de livegang).
+
+### Achtergrondkaart bij de livegang
+De testomgeving gebruikt de openbare kaarttegels van OpenStreetMap. Die zijn bedoeld voor beperkt gebruik.
+Zet voor de publieke site met veel bezoekers een eigen tegeldienst in, bijvoorbeeld MapTiler (EU, gratis
+instapniveau) of zelf gehoste tegels, via `KAART_TEGELS_URL` en `KAART_ATTRIBUTIE`. Er hoeft dan niets
+aan de code te veranderen.

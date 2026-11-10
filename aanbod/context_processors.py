@@ -12,5 +12,10 @@ def portaal(request):
         # Bij de statische export wordt dit het pad van de GitHub Pages-site
         "BASIS": getattr(request, "basis_url", "/"),
         "BASIS_JSON": json.dumps(getattr(request, "basis_url", "/")),
+        "KAART_JSON": json.dumps({
+            "tegels": settings.KAART_TEGELS_URL,
+            "attributie": settings.KAART_ATTRIBUTIE,
+            "maxZoom": settings.KAART_MAX_ZOOM,
+        }),
         "STATISCH": getattr(request, "statisch", False),
     }

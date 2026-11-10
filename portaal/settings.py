@@ -103,6 +103,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 PORTAAL_NAAM = env("PORTAAL_NAAM", "Weune")
 # Publiek adres van de site; gebruikt voor de deelafbeelding (og:image) en canonieke links.
 PORTAAL_SITE_URL = env("PORTAAL_SITE_URL", "https://www.weune.nl").rstrip("/")
+# Achtergrondkaart voor 'zoeken op kaart' (Leaflet-tegels). Standaard OpenStreetMap: dekt ook België.
+# Voor veel bezoekers in productie een eigen tegeldienst instellen (bijv. MapTiler of zelf gehost).
+KAART_TEGELS_URL = env("KAART_TEGELS_URL", "https://tile.openstreetmap.org/{z}/{x}/{y}.png")
+KAART_ATTRIBUTIE = env(
+    "KAART_ATTRIBUTIE", '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>-bijdragers'
+)
+KAART_MAX_ZOOM = int(env("KAART_MAX_ZOOM", "19"))
 # Mogen zoekmachines de site indexeren? Standaard uit zolang het een test is.
 PORTAAL_INDEXEREN = env_bool("PORTAAL_INDEXEREN", False)
 # Aantal dagen dat een woning het label 'nieuw' krijgt.

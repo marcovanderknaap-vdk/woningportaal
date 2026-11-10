@@ -63,7 +63,7 @@
     <div class="raster" id="raster"></div>
     <div class="kaart-weergave" id="kaart-weergave" hidden>
       <div id="kaart" class="kaart-kaart" role="region" aria-label="Kaart met woningen"></div>
-      <p class="kaart-bron">Achtergrondkaart: © Kadaster (PDOK). Woningen zonder officieel huisnummer staan alleen in de lijst.</p>
+      <p class="kaart-bron">Woningen zonder officieel huisnummer staan alleen in de lijst.</p>
     </div>
     <div class="leeg" id="leeg" hidden>
       <p>Geen woningen gevonden met deze selectie. Probeer een andere woonplaats of prijsklasse.</p>
@@ -91,6 +91,7 @@
   let pagina = 1;
   let weergave = 'lijst';
   const basis = {{ BASIS_JSON|safe }};
+  const KAART = {{ KAART_JSON|safe }};
 
   // Filters, sortering en pagina uit de URL halen (zodat een selectie te delen is)
   const params = new URLSearchParams(location.search);
@@ -246,9 +247,7 @@
       const L = window.L;
       if (!lkaart) {
         lkaart = L.map('kaart', { scrollWheelZoom: true, zoomControl: true }).setView([51.5, 3.85], 9);
-        L.tileLayer('https://service.pdok.nl/brt/achtergrondkaart/wmts/v2_0/pastel/EPSG:3857/{z}/{x}/{y}.png', {
-          minZoom: 7, maxZoom: 19, attribution: '© <a href="https://www.kadaster.nl">Kadaster</a>',
-        }).addTo(lkaart);
+        L.tileLayer(KAART.tegels, { minZoom: 7, maxZoom: KAART.maxZoom, attribution: KAART.attributie }).addTo(lkaart);
         groep = L.markerClusterGroup({
           showCoverageOnHover: false, maxClusterRadius: 50, spiderfyOnMaxZoom: true,
           iconCreateFunction: c => {

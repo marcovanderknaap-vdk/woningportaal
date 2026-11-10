@@ -226,6 +226,8 @@ select.gekozen { background-color: var(--weune-golf-licht); border-color: var(--
 }
 .kaart-bron { margin-top: var(--weune-ruimte-2); font-size: var(--weune-fs-klein); color: var(--weune-tekst-3); }
 .leaflet-container { font-family: var(--weune-font-tekst); }
+/* Rustiger kaartbeeld, zodat de prijslabels opvallen */
+.kaart-kaart .leaflet-tile-pane { filter: saturate(.6) brightness(1.03); }
 .leaflet-container a.leaflet-popup-close-button { width: 32px; height: 32px; font-size: 22px; line-height: 30px; color: var(--weune-tekst-2); }
 
 /* Prijslabel per woning */
