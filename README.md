@@ -128,3 +128,23 @@ aan de code te veranderen.
 Alle links naar makelaarssites krijgen UTM-parameters (`utm_source=weune`, `utm_medium=referral`,
 `utm_campaign=woningaanbod`, `utm_content=woningpagina|omschrijving|makelaarsoverzicht`). Makelaars zien zo
 in Google Analytics of een vergelijkbaar pakket hoeveel bezoekers Weune oplevert. Zie de templatefilter `via_weune`.
+
+## Planning: bij de verhuizing naar de eigen server
+Afgesproken tijdens de testfase (november 2026). Tot de verhuizing draait de controle één keer per dag op GitHub.
+
+- [ ] **Server:** Hetzner Cloud CPX12 (of CPX22 voor meer ruimte), met automatische updates en dagelijkse back-ups.
+- [ ] **Test- en productieomgeving** op dezelfde server: branch `ontwikkeling` → `test.weune.nl` (met wachtwoord), branch `main` → `www.weune.nl`.
+- [ ] **PostgreSQL** in plaats van SQLite (de code is er al op voorbereid en getest; zie "Database: SQLite of PostgreSQL").
+- [ ] **Controle in twee snelheden:**
+  - elk uur een snelle ronde: alleen overzichtspagina's/sitemaps bekijken en nieuwe woningen ophalen;
+  - één keer per dag (eventueel 2–3×) een volledige ronde: alle bekende woningen op status en prijs controleren.
+- [ ] **Makelaars parallel controleren**, met per site de gevraagde wachttijd (nodig bij ±40 makelaars).
+- [ ] **Storingsmails slimmer:** alleen bij een nieuwe storing en bij herstel, plus één dagelijkse samenvatting.
+- [ ] **Eigen kaarttegeldienst** (bijv. MapTiler) via `KAART_TEGELS_URL`, in plaats van de openbare OpenStreetMap-tegels.
+- [ ] **Indexeren aanzetten** voor de publieke site (`PORTAAL_INDEXEREN=true`), niet voor de testomgeving.
+- [ ] **E-maildienst** (bijv. Brevo of Mailgun EU) voor storingsmails en later de zoekprofielen.
+
+Daarna: **zoekprofielen met e-mailmeldingen** (inschrijven met bevestigingsmail, afmeldlink, privacyverklaring),
+die profiteren van de snelle ronde per uur.
+
+Nog aan te leveren: contactadres voor de pagina "Over Weune" (bijv. voor makelaars die willen aansluiten).
