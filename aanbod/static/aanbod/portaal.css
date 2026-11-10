@@ -217,7 +217,7 @@ select.gekozen { background-color: var(--weune-golf-licht); border-color: var(--
 .makelaarkaart__voet strong { color: var(--weune-wit); font-family: var(--weune-font-kop); font-size: 1rem; }
 .makelaarkaart__voet a {
   display: inline-flex; align-items: center; gap: 6px; min-height: 32px; justify-self: start;
-  color: var(--weune-wit); font-weight: 600; text-decoration: none;
+  color: var(--weune-wit); font-weight: 600; text-decoration: none; white-space: nowrap;
 }
 .makelaarkaart__voet a:hover { color: var(--weune-golf); text-decoration: underline; }
 .makelaarkaart__voet a .icoon { width: 16px; height: 16px; }

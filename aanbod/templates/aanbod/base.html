@@ -29,8 +29,8 @@
         <img class="logo__beeldmerk" src="{{ BASIS }}static/brand/weune-beeldmerk-blauw_20261110.svg" alt="{{ PORTAAL_NAAM }}" width="36" height="36">
       </a>
       <nav class="menu" aria-label="Hoofdmenu">
-        <a href="{{ BASIS }}"{% if request.resolver_match.url_name == "index" or not request.resolver_match %} aria-current="page"{% endif %}>Koopwoningen</a>
-        <a href="{{ BASIS }}makelaars/"{% if request.resolver_match.url_name == "makelaars" %} aria-current="page"{% endif %}>Makelaars</a>
+        <a href="{{ BASIS }}"{% if menu_actief == "koopwoningen" %} aria-current="page"{% endif %}>Koopwoningen</a>
+        <a href="{{ BASIS }}makelaars/"{% if menu_actief == "makelaars" %} aria-current="page"{% endif %}>Makelaars</a>
       </nav>
     </div>
   </header>

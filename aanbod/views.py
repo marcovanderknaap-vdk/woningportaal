@@ -83,6 +83,7 @@ def index(request):
             "per_pagina": PER_PAGINA,
             "statussen": Woning.Status.choices,
             "makelaars_aantal": Makelaar.objects.filter(actief=True).count(),
+            "menu_actief": "koopwoningen",
         },
     )
 
@@ -116,6 +117,7 @@ def detail(request, pk):
             "logo": _media_url(request, woning.makelaar.logo),
             # Het aanbiedende kantoor; de overige vestigingen ingeklapt eronder
             "kantoor": kantoor,
+            "menu_actief": "koopwoningen",
             "andere_kantoren": [v for v in alle_kantoren if v != kantoor],
         },
     )
@@ -126,7 +128,7 @@ def makelaars(request):
     for m in lijst:
         m.aantal = Woning.objects.zichtbaar().filter(makelaar=m).count()
         m.logo_url = _media_url(request, m.logo)
-    return render(request, "aanbod/makelaars.html", {"makelaars": lijst})
+    return render(request, "aanbod/makelaars.html", {"makelaars": lijst, "menu_actief": "makelaars"})
 
 
 def robots_txt(request):
