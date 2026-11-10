@@ -53,7 +53,8 @@ button, select, input { font: inherit; }
 .hero { background: linear-gradient(180deg, var(--weune-golf-licht) 0%, var(--weune-oppervlak) 100%); }
 .hero .binnen { padding-block: var(--weune-ruimte-6) var(--weune-ruimte-7); }
 @media (min-width: 768px) { .hero .binnen { padding-block: var(--weune-ruimte-7) var(--weune-ruimte-8); } }
-.hero h1 { font-size: var(--weune-fs-display); font-weight: 700; color: var(--weune-nacht); max-width: 18ch; }
+.hero h1 { font-size: var(--weune-fs-display); font-weight: 700; color: var(--weune-nacht); max-width: 20ch; }
+.payoff__accent { display: block; color: var(--weune-blauw); }
 .hero__intro { margin-top: var(--weune-ruimte-3); color: var(--weune-tekst-2); font-size: 1.125rem; max-width: 60ch; }
 
 .zoekpaneel {
@@ -199,6 +200,7 @@ select.gekozen { background-color: var(--weune-golf-licht); border-color: var(--
 @media (min-width: 768px) { .voet__binnen { grid-template-columns: 2fr 1fr; padding-left: 32px; padding-right: 32px; } }
 .voet__merk { display: grid; gap: var(--weune-ruimte-3); max-width: 46ch; }
 .voet__merk img { height: 36px; width: auto; }
+.voet__payoff { font-family: var(--weune-font-kop); font-weight: 600; font-size: var(--weune-fs-h4); color: var(--weune-wit); }
 .voet__links { display: grid; gap: 4px; align-content: start; }
 .voet__links a { color: var(--weune-wit); text-decoration: none; min-height: 32px; display: inline-flex; align-items: center; }
 .voet__links a:hover { color: var(--weune-golf); }

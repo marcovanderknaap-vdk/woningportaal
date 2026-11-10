@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block titel %}{{ PORTAAL_NAAM }} – het Zeeuwse woningaanbod{% endblock %}</title>
+  <title>{% block titel %}{{ PORTAAL_NAAM }} – Wonen in Zeeland. Hier wil ik weune!{% endblock %}</title>
   <meta name="description" content="{% block beschrijving %}Het woningaanbod in Zeeland op één plek, van de aangesloten NVM-makelaars. Elke dag bijgewerkt.{% endblock %}">
   {% if not INDEXEREN %}<meta name="robots" content="noindex, nofollow">{% endif %}
   <link rel="icon" href="{{ BASIS }}favicon.ico" sizes="any">
@@ -12,7 +12,7 @@
   <link rel="manifest" href="{{ BASIS }}site.webmanifest">
   <meta name="theme-color" content="#0A3A86">
   <meta property="og:site_name" content="{{ PORTAAL_NAAM }}">
-  <meta property="og:title" content="{% block og_titel %}{{ PORTAAL_NAAM }} – het Zeeuwse woningaanbod{% endblock %}">
+  <meta property="og:title" content="{% block og_titel %}Wonen in Zeeland. Hier wil ik weune!{% endblock %}">
   <meta property="og:image" content="{% block og_image %}{{ SITE_URL }}/og-image.png{% endblock %}">
   <link rel="preload" href="{{ BASIS }}static/fonts/outfit-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="{{ BASIS }}static/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -40,6 +40,7 @@
     <div class="voet__binnen">
       <div class="voet__merk">
         <img src="{{ BASIS }}static/brand/weune-logo-horizontaal-wit_20261110.svg" alt="{{ PORTAAL_NAAM }}" width="130" height="36">
+        <p class="voet__payoff">Wonen in Zeeland. Hier wil ik weune!</p>
         <p>Het Zeeuwse woningaanbod op één plek. Alle woningen komen van aangesloten NVM-makelaars en worden elke dag bijgewerkt.</p>
       </div>
       <nav class="voet__links" aria-label="Voettekst">

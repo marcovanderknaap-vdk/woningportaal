@@ -9,6 +9,7 @@ Huisstijl en projectcontext van Weune. Claude Code leest dit bestand bij elke se
 - Domein: www.weune.nl.
 - Alleen NVM-makelaars kunnen aanbod plaatsen. Benoem dit waar het vertrouwen geeft (footer, over-ons, makelaarspagina's), maar gebruik nooit het NVM-logo of NVM-beeldmerk zonder schriftelijke toestemming van de NVM.
 - Doelgroep: woningzoekers in en naar Zeeland (Zeeuwse eilanden en Zeeuws-Vlaanderen, ook Belgische kopers) en de aangesloten NVM-makelaars.
+- Pay-off: **"Wonen in Zeeland. Hier wil ik weune!"** – altijd letterlijk zo, met "weune" in kleine letters (woordgrap op het Zeeuwse woord). Dit is de enige kop met een uitroepteken. Staat in de hero van de homepage, de paginatitel en de footer.
 - Taal: Nederlands. Spreek bezoekers aan met "je/jouw". Toon: helder, warm, nuchter Zeeuws. Geen marketingjargon, geen uitroeptekens in koppen.
 
 ## Logo
