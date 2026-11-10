@@ -50,5 +50,14 @@
       <p class="voet__klein">De informatie komt van de websites van de makelaars. Aan de getoonde gegevens kun je geen rechten ontlenen; kijk voor de actuele stand altijd bij de makelaar.</p>
     </div>
   </footer>
+  <script>
+    // Op telefoons en tablets openen links naar makelaarssites in hetzelfde tabblad:
+    // met de terugknop keert de bezoeker dan direct terug op Weune, op dezelfde plek.
+    // Op desktop blijft het een nieuw tabblad.
+    (function () {
+      if (!window.matchMedia('(hover: none) and (pointer: coarse)').matches) return;
+      document.querySelectorAll('a[data-extern]').forEach(function (a) { a.removeAttribute('target'); });
+    })();
+  </script>
 </body>
 </html>
