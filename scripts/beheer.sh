@@ -19,9 +19,13 @@ case "${1:-start}" in
     fi
     python manage.py migrate --noinput
     python manage.py makelaars_laden --niet-bijwerken
-    if ! python manage.py shell -c "from django.contrib.auth.models import User; exit(0 if User.objects.exists() else 1)"; then
-      echo "Maak een beheerder aan:"
-      python manage.py createsuperuser
+    if ! python manage.py shell -c "from django.contrib.auth.models import User; exit(0 if User.objects.exists() else 1)" 2>/dev/null; then
+      if [ -t 0 ]; then
+        echo "Maak een beheerder aan:"
+        python manage.py createsuperuser
+      else
+        echo ">>> Nog geen beheerder. Typ in de terminal: python manage.py createsuperuser"
+      fi
     fi
     ;;
   start)
